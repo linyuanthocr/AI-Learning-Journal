@@ -1,3 +1,5 @@
+# LORA: LOW-RANK ADAPTATION OF LARGE LANGUAGE MODELS
+
 ## Background
 Many applications in natural language processing rely on adapting one large-scale, pre-trained language model to multiple downstream applications. Such adaptation is usually done via fine-tuning, which updates all the parameters of the pre-trained model. The major downside of fine-tuning is that the new model contains as many parameters as in the original model. 
 
