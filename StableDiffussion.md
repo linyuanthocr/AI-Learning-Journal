@@ -7,7 +7,7 @@ Key to enhance DM accessibility: reduce the computational complexity without imp
 
 #### Contributions:
 1. Ours can (a) work on a compression level which provides more faithful and detailed reconstructions than previous work (see Fig. 1) and (b) can be efficiently applied to high-resolution synthesis of megapixel images.
-2.  (ii) We achieve competitive performance on multipletasks (unconditional image synthesis, inpainting, stochastic super-resolution) and datasets while significantly lowering computational costs. Compared to pixel-based diffusion ap- proaches, we also significantly decrease inference costs. 
+2.  (ii) We achieve competitive performance on multipletasks (unconditional image synthesis, inpainting, stochastic  ^super-resolution) and datasets while significantly lowering computational costs. Compared to pixel-based diffusion ap- proaches, we also significantly decrease inference costs. 
 3. (iii) Our approach does not require a delicate weighting of reconstruction and generative abilities. This ensures extremely faithful reconstructions and requires very little regularization of the latent space. 
 4. (iv) We find that for densely conditioned tasks such as super-resolution, inpainting and semantic synthesis, our model can be applied in a convolutional fashion and render large, consistent images of ∼ 1024^2 px.
 5.  (v) Moreover, we design a general-purpose conditioning mechanism based on cross-attention, enabling multi-modal training. We use it to train class-conditional, text-to-image and layout-to-image models. 
@@ -15,14 +15,25 @@ Key to enhance DM accessibility: reduce the computational complexity without imp
 
 
 #### Method:
-1. Perceptional compression:
+1.  Perceptional compression:
     *  Model: an auto-encoder trained by a perceptual loss + path-based adversarial objective. (Enforce Local realism & avoid bluriness)
     *  KL-reg &  VQ-reg(avoid to generate high-variance Latency spaces) & 2D representation for mild compression (rather than 1D)
-2.     Latent diffusion model, neutral backbone is time-conditional UNet
-3.     Conditioning mechanisms
+
+2.  Latent diffusion model, neutral backbone is time-conditional UNet
+<p align="center">
+    <img src="images/SD/LDMFormular.jpg"  width="300">
+</p>
+
+3.  Conditioning mechanisms
+<p align="center">
+    <img src="./images/SD/LDM.jpg"  width="500">
+</p>
 
 introduce a domain specific encoder τθ that projects y to an intermediate representation τθ(y) ∈ RM×dτ, which is then mapped to the intermediate layers of the UNet via a cross-attention layer implementing
 
+<img src="images/SD/CrossAnnt1.jpg"  width="400">
+<img src="images/SD/CrossAnnt2.jpg"  width="400">
+<img src="images/SD/CrossAttn3.jpg"  width="400">
 
 
 Usage:
@@ -93,7 +104,9 @@ betas = torch.linspace(beta_start**0.5, beta_end**0.5, num_train_timesteps, dtyp
 
 To train the diffusion model， CFG（conditional free guidance）is adopted.
 
-
+<p align="center">
+    <img src="./images/SD/CFG.jpg"  width="500">
+</p>
 
 [HuggingFace— Stable diffusionv1.5](https://huggingface.co/runwayml/stable-diffusion-v1-5)
 
