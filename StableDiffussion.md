@@ -20,9 +20,12 @@ Key to enhance DM accessibility: reduce the computational complexity without imp
     *  KL-reg &  VQ-reg(avoid to generate high-variance Latency spaces) & 2D representation for mild compression (rather than 1D)
 
 2.  Latent diffusion model, neutral backbone is time-conditional UNet
+
 <p align="center">
     <img src="images/SD/LDMFormular.jpg"  width="300">
 </p>
+
+
 
 3.  Conditioning mechanisms
 <p align="center">
