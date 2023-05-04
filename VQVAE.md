@@ -45,6 +45,20 @@ just copy gradients from decoder input $z_q(x)$ to encoder output $z_e(x)$.
 
 [Codeing from github](https://github.com/xiaohu2015/nngen/blob/main/models/vq_vae.ipynb)
 
+```python
+import os
+import numpy as np
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+from torchvision import datasets, transforms
+from sklearn.manifold import TSNE
+import pandas as pd
+import matplotlib.pyplot as plt
+
+%matplotlib inline
+```
+
 `VectorQuantizer`
 
 ```python
