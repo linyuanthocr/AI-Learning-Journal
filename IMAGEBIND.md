@@ -1,7 +1,7 @@
 ## ImageBIND
 
 <p align="center">
-    <img src="images/IMAGEBIND/Flowchart.jpg"  width="500">
+    <img src="images/IMAGEBIND/Flowchart.jpg"  width="700">
 </p>
 
 #### Abstract
@@ -16,13 +16,13 @@
 2. We use large-scale image-text paired data (CLIP) along with naturally paired ‘self-supervised’ data across four new modal- ities - audio, depth, thermal, and Inertial Measurement Unit (IMU) readings – and show strong emergent zero-shot clas- sification and retrieval performance on tasks for each of these modalities. 
 
 <p align="center">
-    <img src="images/IMAGEBIND/Method.jpg"  width="500">
+    <img src="images/IMAGEBIND/Method.jpg"  width="700">
 </p>
 
 #### InfoNCE
 
 <p align="center">
-    <img src="images/IMAGEBIND/InfoNCE.jpg"  width="250">
+    <img src="images/IMAGEBIND/InfoNCE.jpg"  width="350">
 </p>
 
 NCE: Noise-Contrastive Estimation
