@@ -21,7 +21,7 @@ Two major methods to tackle this problem:
 1. LOW-RANK-PARAMETRIZED UPDATE MATRICES
 
 <p align="center">
-    <img src="images/LORA%20be6c120ef2054aa49adcb865693434f1/2DE04CF7-BAD5-4E15-A6E9-D23FB235004F.png"  width="700">
+    <img src="images/LORA%20be6c120ef2054aa49adcb865693434f1/2DE04CF7-BAD5-4E15-A6E9-D23FB235004F.png"  width="300">
 </p>
 
 
