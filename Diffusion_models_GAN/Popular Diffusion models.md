@@ -24,7 +24,7 @@
 
 这个工作，常规的扩散模型是基于pixel的生成模型，而Latent Diffusion是基于latent的生成模型，它先采用一个autoencoder将图像压缩到latent空间，然后用扩散模型来生成图像的latents，最后送入autoencoder的decoder模块就可以得到生成的图像。
 
-![Untitled](Popular%20Diffusion%20models%20eb9e858a18874bee9cafc7e276e9e701/Untitled.png)
+![Untitled](images/Popular%20Diffusion%20models%20eb9e858a18874bee9cafc7e276e9e701/Untitled.png)
 
 SD模型的主体结构如下图所示，主要包括三个模型：
 
@@ -32,17 +32,17 @@ SD模型的主体结构如下图所示，主要包括三个模型：
 - **CLIP text encoder**：提取输入text的text embeddings，通过cross attention方式送入扩散模型的UNet中作为condition；
 - **UNet**：扩散模型的主体，用来实现文本引导下的latent生成。
 
-![Untitled](Popular%20Diffusion%20models%20eb9e858a18874bee9cafc7e276e9e701/Untitled.webp)
+![Untitled](images/Popular%20Diffusion%20models%20eb9e858a18874bee9cafc7e276e9e701/Untitled.webp)
 
 ## Autoencoder
 
-![Untitled](Popular%20Diffusion%20models%20eb9e858a18874bee9cafc7e276e9e701/Untitled%201.png)
+![Untitled](images/Popular%20Diffusion%20models%20eb9e858a18874bee9cafc7e276e9e701/Untitled%201.png)
 
 [latent diffusion loss](https://github.com/CompVis/latent-diffusion/tree/main/ldm/modules/losses)
 
-![Untitled](Popular%20Diffusion%20models%20eb9e858a18874bee9cafc7e276e9e701/Untitled%202.png)
+![Untitled](images/Popular%20Diffusion%20models%20eb9e858a18874bee9cafc7e276e9e701/Untitled%202.png)
 
-![Untitled](Popular%20Diffusion%20models%20eb9e858a18874bee9cafc7e276e9e701/Untitled%203.png)
+![Untitled](images/Popular%20Diffusion%20models%20eb9e858a18874bee9cafc7e276e9e701/Untitled%203.png)
 
 ```python
 import torch
@@ -71,7 +71,7 @@ with torch.inference_mode():
 rec_image
 ```
 
-![Untitled](Popular%20Diffusion%20models%20eb9e858a18874bee9cafc7e276e9e701/Untitled%204.png)
+![Untitled](images/Popular%20Diffusion%20models%20eb9e858a18874bee9cafc7e276e9e701/Untitled%204.png)
 
 ## **CLIP text encoder**
 
@@ -105,11 +105,11 @@ text_embeddings = text_encoder(text_input_ids.to("cuda"))[0]
 
 SD的扩散模型是一个860M的UNet，其主要结构如下图所示（这里以输入的latent为64x64x4维度为例），其中encoder部分包括3个CrossAttnDownBlock2D模块和1个DownBlock2D模块，而decoder部分包括1个UpBlock2D模块和3个CrossAttnUpBlock2D模块，中间还有一个UNetMidBlock2DCrossAttn模块。encoder和decoder两个部分是完全对应的，中间存在skip connection。注意3个CrossAttnDownBlock2D模块最后均有一个2x的downsample操作，而DownBlock2D模块是不包含下采样的。
 
-![Untitled](Popular%20Diffusion%20models%20eb9e858a18874bee9cafc7e276e9e701/Untitled%205.png)
+![Untitled](images/Popular%20Diffusion%20models%20eb9e858a18874bee9cafc7e276e9e701/Untitled%205.png)
 
 其中CrossAttnDownBlock2D模块的主要结构如下图所示，text condition将通过CrossAttention模块嵌入进来，此时Attention的query是UNet的中间特征，而key和value则是text embeddings。 CrossAttnUpBlock2D模块和CrossAttnDownBlock2D模块是一致的，但是就是总层数为3。
 
-![Untitled](Popular%20Diffusion%20models%20eb9e858a18874bee9cafc7e276e9e701/Untitled%206.png)
+![Untitled](images/Popular%20Diffusion%20models%20eb9e858a18874bee9cafc7e276e9e701/Untitled%206.png)
 
 ### UNet code
 
@@ -485,19 +485,19 @@ betas = torch.linspace(beta_start**0.5, beta_end**0.5, num_train_timesteps, dtyp
 
 在训练条件扩散模型时，往往会采用**Classifier-Free Guidance**（这里简称为CFG），所谓的CFG简单来说就是在训练条件扩散模型的同时也训练一个无条件的扩散模型，同时在采样阶段将条件控制下预测的噪音和无条件下的预测噪音组合在一起来确定最终的噪音，具体的计算公式如下所示：
 
-![Untitled](Popular%20Diffusion%20models%20eb9e858a18874bee9cafc7e276e9e701/Untitled%208.png)
+![Untitled](images/Popular%20Diffusion%20models%20eb9e858a18874bee9cafc7e276e9e701/Untitled%208.png)
 
 这里的$\omega$为**guidance scale**，当$\omega$越大时，condition 起的作用越大，即生成的图像其更和输入文本一致。CFG的具体实现非常简单，在训练过程中，我们只需要**以一定的概率（比如10%）随机drop掉text**即可，这里我们可以将text置为空字符串（前面说过此时依然能够提取text embeddings）。这里并没有介绍CLF背后的技术原理，感兴趣的可以阅读CFG的论文
 
 [Classifier-Free Diffusion Guidance](https://link.zhihu.com/?target=https%3A//arxiv.org/abs/2207.12598) 以及guided diffusion的论文 [Diffusion Models Beat GANs on Image Synthesis](https://link.zhihu.com/?target=https%3A//arxiv.org/abs/2105.05233) **CFG对于提升条件扩散模型的图像生成效果是至关重要的**。
 
-[SD 应用](Popular%20Diffusion%20models%20eb9e858a18874bee9cafc7e276e9e701/SD%20%E5%BA%94%E7%94%A8%202eae7a95ea4e489d9859a2f942bc2bc9.md)
+[SD 应用](images/Popular%20Diffusion%20models%20eb9e858a18874bee9cafc7e276e9e701/SD%20%E5%BA%94%E7%94%A8%202eae7a95ea4e489d9859a2f942bc2bc9.md)
 
 ## SDXL
 
 [zhuanlan.zhihu.com](https://zhuanlan.zhihu.com/p/642496862)
 
-[Diffusion model — SDXL](Popular%20Diffusion%20models%20eb9e858a18874bee9cafc7e276e9e701/Diffusion%20model%20%E2%80%94%20SDXL%20034fb5c11e2b4b82b3e5931c50a86a6a.md)
+[Diffusion model — SDXL](images/Popular%20Diffusion%20models%20eb9e858a18874bee9cafc7e276e9e701/Diffusion%20model%20%E2%80%94%20SDXL%20034fb5c11e2b4b82b3e5931c50a86a6a.md)
 
 [**Stable diffusion library**](https://huggingface.co/blog/stable_diffusion)
 
@@ -506,7 +506,7 @@ betas = torch.linspace(beta_start**0.5, beta_end**0.5, num_train_timesteps, dtyp
 
 [**https://huggingface.co/docs/diffusers/index**](https://huggingface.co/docs/diffusers/index)
 
-[Stable_Diffusion_Diagrams_V2.pdf](Popular%20Diffusion%20models%20eb9e858a18874bee9cafc7e276e9e701/Stable_Diffusion_Diagrams_V2.pdf)
+[Stable_Diffusion_Diagrams_V2.pdf](images/Popular%20Diffusion%20models%20eb9e858a18874bee9cafc7e276e9e701/Stable_Diffusion_Diagrams_V2.pdf)
 
 # Scalable Diffusion Models with Transformers (DiT)
 
@@ -520,15 +520,15 @@ We explore a new class of diffusion models based on the transformer architecture
 
 The input to DiT is a spatial representation z (for 256 × 256 × 3 images, z has shape 32 × 32 × 4). The first layer of DiT is “patchify,” which converts the spatial input into a sequence of T tokens, each of dimension d, by **linearly embedding** each patch in the input. Following patchify, we apply standard ViT **frequency-based positional embeddings (the sine-cosine version) to all input tokens**. The number of tokens T created by patchify is determined by the patch size hyperparameter p. As shown in Figure 4, halving p will quadruple T, and thus at least quadruple total transformer Gflops. Although it has a significant impact on Gflops, note that changing p has no meaningful impact on downstream parameter counts. We add p = 2, 4, 8 to the DiT design space.
 
-![Untitled](Popular%20Diffusion%20models%20eb9e858a18874bee9cafc7e276e9e701/Untitled%209.png)
+![Untitled](images/Popular%20Diffusion%20models%20eb9e858a18874bee9cafc7e276e9e701/Untitled%209.png)
 
 ## DiT block design
 
-![Untitled](Popular%20Diffusion%20models%20eb9e858a18874bee9cafc7e276e9e701/Untitled%2010.png)
+![Untitled](images/Popular%20Diffusion%20models%20eb9e858a18874bee9cafc7e276e9e701/Untitled%2010.png)
 
 Following patchify, the input tokens are processed by a sequence of transformer blocks. In addition to noised image inputs, diffusion models sometimes process additional conditional information such as **noise timesteps t, class labels c**, natural language, etc. We explore **four variants of transformer blocks** that process conditional inputs differently. The designs introduce small, but important, modifications to the standard ViT block design. The designs of all blocks are shown in Figure 3. 
 
-![Untitled](Popular%20Diffusion%20models%20eb9e858a18874bee9cafc7e276e9e701/Untitled%2011.png)
+![Untitled](images/Popular%20Diffusion%20models%20eb9e858a18874bee9cafc7e276e9e701/Untitled%2011.png)
 
 ### In-context conditioning
 
@@ -544,7 +544,7 @@ Following the widespread usage of **adaptive normalization layers** [40] in GANs
 
 [](https://arxiv.org/pdf/1911.07013.pdf)
 
-![Untitled](Popular%20Diffusion%20models%20eb9e858a18874bee9cafc7e276e9e701/Untitled%2012.png)
+![Untitled](images/Popular%20Diffusion%20models%20eb9e858a18874bee9cafc7e276e9e701/Untitled%2012.png)
 
 ### adaLN-Zero block
 
@@ -554,7 +554,7 @@ Zero-initializing the final convolutional layer in each block prior to any resid
 
 We apply a sequence of N DiT blocks, each operating at the hidden dimension size d. Following ViT, we use standard transformer configs that jointly scale N, d and attention heads
 
-![Untitled](Popular%20Diffusion%20models%20eb9e858a18874bee9cafc7e276e9e701/Untitled%2013.png)
+![Untitled](images/Popular%20Diffusion%20models%20eb9e858a18874bee9cafc7e276e9e701/Untitled%2013.png)
 
 ### Transformer decoder.
 
@@ -564,6 +564,6 @@ For the rest of the paper, all models will use **adaLN-Zero DiT blocks**
 
 [](https://github.com/facebookresearch/DiT/blob/main/models.py)
 
-[DiT model](Popular%20Diffusion%20models%20eb9e858a18874bee9cafc7e276e9e701/DiT%20model%20a73a071c51544374997ae8db29ed92fb.md)
+[DiT model](images/Popular%20Diffusion%20models%20eb9e858a18874bee9cafc7e276e9e701/DiT%20model%20a73a071c51544374997ae8db29ed92fb.md)
 
-[Diffusion model：DiT, transformer only](Popular%20Diffusion%20models%20eb9e858a18874bee9cafc7e276e9e701/Diffusion%20model%EF%BC%9ADiT,%20transformer%20only%208a22b30972f343d0befe0f0a373d8387.md)
+[Diffusion model：DiT, transformer only](images/Popular%20Diffusion%20models%20eb9e858a18874bee9cafc7e276e9e701/Diffusion%20model%EF%BC%9ADiT,%20transformer%20only%208a22b30972f343d0befe0f0a373d8387.md)

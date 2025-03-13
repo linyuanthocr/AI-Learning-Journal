@@ -1,6 +1,6 @@
 # style transfer
 
-[Stylebrush](style%20transfer%2014771bdab3cf80e6b5ecd51c18808e31/Stylebrush%20bd9a4a57c7574ae2b54776ba6209fcc6.md)
+[Stylebrush](images/style%20transfer%2014771bdab3cf80e6b5ecd51c18808e31/Stylebrush%20bd9a4a57c7574ae2b54776ba6209fcc6.md)
 
 - [ ]  Animate anyone
 - [ ]  Kolors
