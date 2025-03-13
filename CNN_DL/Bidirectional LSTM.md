@@ -2,7 +2,7 @@
 
 # **Recurrent Neural Networks**
 
-![Untitled](Bidirectional%20LSTM/Untitled.png)
+![Untitled](images/Bidirectional%20LSTM/Untitled.png)
 
 This chain-like nature reveals that recurrent neural networks are intimately related to sequences and lists. They’re the natural architecture of neural network to use for such data.
 
@@ -16,7 +16,7 @@ One of the appeals of RNNs is the idea that they might be able to connect previo
 
 Sometimes, we only need to look at recent information to perform the present task. For example, consider a language model trying to predict the next word based on the previous ones. If we are trying to predict the last word in “the clouds are in the *sky*,” we don’t need any further context – it’s pretty obvious the next word is going to be sky. In such cases, where the gap between the relevant information and the place that it’s needed is small, RNNs can learn to use the past information.
 
-![Untitled](Bidirectional%20LSTM/Untitled%201.png)
+![Untitled](images/Bidirectional%20LSTM/Untitled%201.png)
 
 # LSTM NetWorks
 
@@ -30,19 +30,19 @@ LSTMs are explicitly designed to avoid the long-term dependency problem. Remembe
 
 All recurrent neural networks have the form of a chain of repeating modules of neural network. In standard RNNs, this repeating module will have a very simple structure, such as a single tanh layer.
 
-![Untitled](Bidirectional%20LSTM/Untitled%202.png)
+![Untitled](images/Bidirectional%20LSTM/Untitled%202.png)
 
                              **The repeating module in a standard RNN contains a single layer.**
 
 LSTMs also have this chain like structure, but the repeating module has a different structure. Instead of having a single neural network layer, there are four, interacting in a very special way.
 
-![Untitled](Bidirectional%20LSTM/Untitled%203.png)
+![Untitled](images/Bidirectional%20LSTM/Untitled%203.png)
 
                          **The repeating module in an LSTM contains four interacting layers.**
 
 Don’t worry about the details of what’s going on. We’ll walk through the LSTM diagram step by step later. For now, let’s just try to get comfortable with the notation we’ll be using.
 
-![Untitled](Bidirectional%20LSTM/Untitled%204.png)
+![Untitled](images/Bidirectional%20LSTM/Untitled%204.png)
 
 In the above diagram, each line carries an entire vector, from the output of one node to the inputs of others. The pink circles represent pointwise operations, like vector addition, while the yellow boxes are learned neural network layers. Lines merging denote concatenation, while a line forking denote its content being copied and the copies going to different locations.
 
@@ -52,13 +52,13 @@ The key to LSTMs is the cell state, the horizontal line running through the top 
 
 The cell state is kind of like a conveyor belt. It runs straight down the entire chain, with only some minor linear interactions. It’s very easy for information to just flow along it unchanged.
 
-![Untitled](Bidirectional%20LSTM/Untitled%205.png)
+![Untitled](images/Bidirectional%20LSTM/Untitled%205.png)
 
 The LSTM does have the ability to remove or add information to the cell state, carefully regulated by structures called gates.
 
 Gates are a way to optionally let information through. They are composed out of a sigmoid neural net layer and a pointwise multiplication operation.
 
-![Untitled](Bidirectional%20LSTM/Untitled%206.png)
+![Untitled](images/Bidirectional%20LSTM/Untitled%206.png)
 
 The sigmoid layer outputs numbers between zero and one, describing how much of each component should be let through. A value of zero means “let nothing through,” while a value of one means “let everything through!”
 
@@ -68,25 +68,25 @@ An LSTM has three of these gates, to protect and control the cell state.
 
 ### Forget Gate
 
-![Untitled](Bidirectional%20LSTM/Untitled%207.png)
+![Untitled](images/Bidirectional%20LSTM/Untitled%207.png)
 
 ### Input Gate
 
-![Untitled](Bidirectional%20LSTM/Untitled%208.png)
+![Untitled](images/Bidirectional%20LSTM/Untitled%208.png)
 
-![Untitled](Bidirectional%20LSTM/Untitled%209.png)
+![Untitled](images/Bidirectional%20LSTM/Untitled%209.png)
 
 ### Output Gate
 
-![Untitled](Bidirectional%20LSTM/Untitled%2010.png)
+![Untitled](images/Bidirectional%20LSTM/Untitled%2010.png)
 
 # **Variants on Long Short Term Memory**
 
-![Untitled](Bidirectional%20LSTM/Untitled%2011.png)
+![Untitled](images/Bidirectional%20LSTM/Untitled%2011.png)
 
-![Untitled](Bidirectional%20LSTM/Untitled%2012.png)
+![Untitled](images/Bidirectional%20LSTM/Untitled%2012.png)
 
-![Untitled](Bidirectional%20LSTM/Untitled%2013.png)
+![Untitled](images/Bidirectional%20LSTM/Untitled%2013.png)
 
 # Frequently Asked Questions (FAQs)
 
@@ -125,4 +125,4 @@ An LSTM has three of these gates, to protect and control the cell state.
 
 The architecture of bidirectional LSTM comprises of two unidirectional LSTMs which process the sequence in both forward and backward directions. This architecture can be interpreted as having two separate LSTM networks, one gets the sequence of tokens as it is while the other gets in the reverse order. Both of these LSTM network returns a probability vector as output and the final output is the combination of both of these probabilities. It can be represented as:
 
-![Untitled](Bidirectional%20LSTM/Untitled%2014.png)
+![Untitled](images/Bidirectional%20LSTM/Untitled%2014.png)
