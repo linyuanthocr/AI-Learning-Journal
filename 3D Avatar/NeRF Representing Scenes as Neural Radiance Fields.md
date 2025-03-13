@@ -30,7 +30,7 @@ Views are synthesized by querying the **5D coordinates** along the camera rays a
         
     2. Hierarchical volume sampling
         
-        ![image.png](NeRF%20Representing%20Scenes%20as%20Neural%20Radiance%20Fields%201b571bdab3cf804a9f26df57cb745cf0/image%205.png)
+        ![image.png](images/NeRF%20Representing%20Scenes%20as%20Neural%20Radiance%20Fields%201b571bdab3cf804a9f26df57cb745cf0/image%205.png)
         
     3. Details
         - Input: RGB, intrinsic parameters, camera poses, scene bound (synthetic data and real data (COLMAP SFM estimation))
