@@ -32,7 +32,7 @@ https://arxiv.org/html/2408.06019v1
 
 https://headgap.github.io/
 
-[HeadGAP](3D%20human%20generation%20project%201a571bdab3cf80168359e46bb6a8d0b4/HeadGAP%201a571bdab3cf80bdb4f1cd3779c714ff.md)
+[HeadGAP](HeadGAP.md)
 
 p
 
@@ -68,7 +68,7 @@ https://yuelangx.github.io/gaussianheadavatar/
 
 https://openaccess.thecvf.com/content/CVPR2024/papers/Xu_Gaussian_Head_Avatar_Ultra_High-fidelity_Head_Avatar_via_Dynamic_Gaussians_CVPR_2024_paper.pdf
 
-[Gaussian Head Avatar](3D%20human%20generation%20project%201a571bdab3cf80168359e46bb6a8d0b4/Gaussian%20Head%20Avatar%201a771bdab3cf801aae03d5b74aec9e04.md)
+[Gaussian Head Avatar](Gaussian%20Head%20Avatar.md)
 
 https://arxiv.org/abs/2312.03029
 
@@ -84,7 +84,7 @@ https://arxiv.org/abs/2305.01190
 
 https://flame.is.tue.mpg.de/
 
-[FLAME：Faces Learned with an Articulated Model and Expressions](3D%20human%20generation%20project%201a571bdab3cf80168359e46bb6a8d0b4/FLAME%EF%BC%9AFaces%20Learned%20with%20an%20Articulated%20Model%20and%20%201a671bdab3cf805b96d4ef9c17a35bc0.md)
+[FLAME：Faces Learned with an Articulated Model and Expressions](FLAME%EF%BC%9AFaces%20Learned%20with%20an%20Articulated%20Model.md)
 
 1. ARAP deformation
 2. NICP method
@@ -116,7 +116,7 @@ https://shenhanqian.github.io/gaussian-avatars
 
 [https://github.com/patrikhuber/eos](https://github.com/patrikhuber/eos)
 
-[IDEAS](3D%20human%20generation%20project%201a571bdab3cf80168359e46bb6a8d0b4/IDEAS%201a771bdab3cf80278398e25bf7099fd3.md)
+[IDEAS](images/3D%20human%20generation%20project%201a571bdab3cf80168359e46bb6a8d0b4/IDEAS%201a771bdab3cf80278398e25bf7099fd3.md)
 
 # 3D Human
 
@@ -134,7 +134,7 @@ GAF: Gaussian Avatar Reconstruction from Monocular Videos via Multi-view Diffusi
 
 https://github.com/tangjiapeng/GAF
 
-![image.png](3D%20human%20generation%20project%201a571bdab3cf80168359e46bb6a8d0b4/image%201.png)
+![image.png](images/3D%20human%20generation%20project%201a571bdab3cf80168359e46bb6a8d0b4/image%201.png)
 
 https://arxiv.org/abs/2412.10209
 
@@ -144,13 +144,13 @@ https://xg-chu.site/project_gagavatar/
 
 https://arxiv.org/abs/2410.07971
 
-![image.png](3D%20human%20generation%20project%201a571bdab3cf80168359e46bb6a8d0b4/f4e04dc4-7a77-459c-81ba-cc81e3fa06f1.png)
+![image.png](images/3D%20human%20generation%20project%201a571bdab3cf80168359e46bb6a8d0b4/f4e04dc4-7a77-459c-81ba-cc81e3fa06f1.png)
 
 https://tobias-kirschstein.github.io/avat3r/
 
 https://arxiv.org/abs/2502.20220
 
-![image.png](3D%20human%20generation%20project%201a571bdab3cf80168359e46bb6a8d0b4/image%202.png)
+![image.png](images/3D%20human%20generation%20project%201a571bdab3cf80168359e46bb6a8d0b4/image%202.png)
 
 https://github.com/ShenhanQian/VHAP/tree/c9ea660c6c6719110eca5ffdaf9029a2596cc5ca
 
@@ -158,7 +158,7 @@ https://arxiv.org/abs/2312.02214
 
 https://ustc3dv.github.io/FlashAvatar/
 
-![image.png](3D%20human%20generation%20project%201a571bdab3cf80168359e46bb6a8d0b4/image%203.png)
+![image.png](images/3D%20human%20generation%20project%201a571bdab3cf80168359e46bb6a8d0b4/image%203.png)
 
 https://xg-chu.site/project_artalk/
 
@@ -170,7 +170,7 @@ https://arxiv.org/abs/2405.10314
 
 https://cat3d.github.io/
 
-![image.png](3D%20human%20generation%20project%201a571bdab3cf80168359e46bb6a8d0b4/image%204.png)
+![image.png](images/3D%20human%20generation%20project%201a571bdab3cf80168359e46bb6a8d0b4/image%204.png)
 
 [https://github.com/Jumpat/SegmentAnythingin3D](https://github.com/Jumpat/SegmentAnythingin3D)
 
@@ -180,7 +180,7 @@ https://jumpat.github.io/SAGA/
 
 https://arxiv.org/abs/2312.00860
 
-![image.png](3D%20human%20generation%20project%201a571bdab3cf80168359e46bb6a8d0b4/image%205.png)
+![image.png](images/3D%20human%20generation%20project%201a571bdab3cf80168359e46bb6a8d0b4/image%205.png)
 
 https://ymq2017.github.io/gaussian-grouping/
 

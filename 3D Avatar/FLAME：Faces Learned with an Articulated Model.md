@@ -2,13 +2,13 @@
 
 In the paper *Learning a Model of Facial Shape and Expression from 4D Scans*, the authors introduce **FLAME**, a 3D morphable model of facial shape and expression. 
 
-![image.png](FLAME%EF%BC%9AFaces%20Learned%20with%20an%20Articulated%20Model%20and%20%201a671bdab3cf805b96d4ef9c17a35bc0/image.png)
+![image.png](images/FLAME%EF%BC%9AFaces%20Learned%20with%20an%20Articulated%20Model%20and%20%201a671bdab3cf805b96d4ef9c17a35bc0/image.png)
 
 To build this model from 4D (time-sequence 3D) scans, they employ a **non-rigid registration process** to align different facial scans to a common topology. Here’s how they do it:
 
 ---
 
-![image.png](FLAME%EF%BC%9AFaces%20Learned%20with%20an%20Articulated%20Model%20and%20%201a671bdab3cf805b96d4ef9c17a35bc0/image%201.png)
+![image.png](images/FLAME%EF%BC%9AFaces%20Learned%20with%20an%20Articulated%20Model%20and%20%201a671bdab3cf805b96d4ef9c17a35bc0/image%201.png)
 
 ### **1. Alignment of 3D Scans (Non-Rigid Registration)**
 
@@ -29,20 +29,20 @@ To construct FLAME, the authors process thousands of 3D facial scans with differ
 - **SMPL body model formulation**
     - SMPL is a parameterized blend-skinned body model that combines an identity shape space, articulated pose, and pose-dependent corrective blendshapes.
     
-    ![image.png](FLAME%EF%BC%9AFaces%20Learned%20with%20an%20Articulated%20Model%20and%20%201a671bdab3cf805b96d4ef9c17a35bc0/image%202.png)
+    ![image.png](images/FLAME%EF%BC%9AFaces%20Learned%20with%20an%20Articulated%20Model%20and%20%201a671bdab3cf805b96d4ef9c17a35bc0/image%202.png)
     
 
 ## Model formulation
 
-![image.png](FLAME%EF%BC%9AFaces%20Learned%20with%20an%20Articulated%20Model%20and%20%201a671bdab3cf805b96d4ef9c17a35bc0/image%203.png)
+![image.png](images/FLAME%EF%BC%9AFaces%20Learned%20with%20an%20Articulated%20Model%20and%20%201a671bdab3cf805b96d4ef9c17a35bc0/image%203.png)
 
-![image.png](FLAME%EF%BC%9AFaces%20Learned%20with%20an%20Articulated%20Model%20and%20%201a671bdab3cf805b96d4ef9c17a35bc0/image%204.png)
+![image.png](images/FLAME%EF%BC%9AFaces%20Learned%20with%20an%20Articulated%20Model%20and%20%201a671bdab3cf805b96d4ef9c17a35bc0/image%204.png)
 
-![image.png](FLAME%EF%BC%9AFaces%20Learned%20with%20an%20Articulated%20Model%20and%20%201a671bdab3cf805b96d4ef9c17a35bc0/image%205.png)
+![image.png](images/FLAME%EF%BC%9AFaces%20Learned%20with%20an%20Articulated%20Model%20and%20%201a671bdab3cf805b96d4ef9c17a35bc0/image%205.png)
 
-![image.png](FLAME%EF%BC%9AFaces%20Learned%20with%20an%20Articulated%20Model%20and%20%201a671bdab3cf805b96d4ef9c17a35bc0/image%206.png)
+![image.png](images/FLAME%EF%BC%9AFaces%20Learned%20with%20an%20Articulated%20Model%20and%20%201a671bdab3cf805b96d4ef9c17a35bc0/image%206.png)
 
-![image.png](FLAME%EF%BC%9AFaces%20Learned%20with%20an%20Articulated%20Model%20and%20%201a671bdab3cf805b96d4ef9c17a35bc0/image%207.png)
+![image.png](images/FLAME%EF%BC%9AFaces%20Learned%20with%20an%20Articulated%20Model%20and%20%201a671bdab3cf805b96d4ef9c17a35bc0/image%207.png)
 
 ### Temporal registration
 

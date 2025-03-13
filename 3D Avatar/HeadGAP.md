@@ -1,6 +1,6 @@
 # HeadGAP
 
-![image.png](HeadGAP%201a571bdab3cf80bdb4f1cd3779c714ff/image.png)
+![image.png](images/HeadGAP%201a571bdab3cf80bdb4f1cd3779c714ff/image.png)
 
 GAP net：auto-decoder
 

@@ -4,7 +4,7 @@
 
 https://www.figure.ai/news/helix
 
-![image.png](Humanoid%20robot%201ae71bdab3cf80fe9590f1a8bdf394ed/image.png)
+![image.png](images/Humanoid%20robot%201ae71bdab3cf80fe9590f1a8bdf394ed/image.png)
 
 # Model and Training Details
 
