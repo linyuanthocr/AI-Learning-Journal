@@ -1,7 +1,7 @@
 ## UNET
 
 <p align="center">
-    <img src="images/SD/UNet.jpg"  width="600">
+    <img src="images/SD/Unet.jpg"  width="600">
 </p>
 As shown in the figure above, the Unet network structure is symmetric and resembles the letter U, hence its name. The entire image is composed of blue/white boxes and arrows of various colors. Blue/white boxes represent feature maps; blue arrows represent 3x3 convolutions for feature extraction; gray arrows represent skip-connections for feature fusion; red arrows represent pooling for dimensionality reduction; green arrows represent upsampling for dimensionality restoration; and cyan arrows represent 1x1 convolutions for outputting results. The copy in the gray arrow "copy and crop" refers to concatenation, while the crop is used to ensure that the dimensions of the two are consistent.
 
