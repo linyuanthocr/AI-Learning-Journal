@@ -1,7 +1,9 @@
 # linyuanthocr.github.io
 # Hi, I'm Yuan Lin 👋
 
-![Header Image](your-banner-url-here)
+<div id="header" align="center">
+  <img src="[https://media.giphy.com/media/M9gbBd9nbDrOTu1Mqx/giphy.gif](https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExZjBscHg4ZmdzYnNyYWZ1am1xaHdnb3RzbTBvNnQ1bGJyY283ZzU1ZCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/6FT3QE3AJMfwJDZBNr/giphy.gif)" width="100"/>
+</div>
 
 🚀 **About Me**  
 - 🏆 Machine Learning & Computer Vision Enthusiast  
@@ -10,8 +12,8 @@
 - 🌎 Find me at [LinkedIn](your-linkedin-url)
 
 🛠 **Tech Stack**  
-![Python](https://img.shields.io/badge/Python-3776AB?style=flat&logo=python&logoColor=white)
 ![C++](https://img.shields.io/badge/C++-00599C?style=flat&logo=cplusplus&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3776AB?style=flat&logo=python&logoColor=white)
 ![Pytorch](https://img.shields.io/badge/PyTorch-EE4C2C?style=flat&logo=pytorch&logoColor=white)
 
 📊 **GitHub Stats**  
