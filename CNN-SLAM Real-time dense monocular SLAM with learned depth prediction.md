@@ -8,13 +8,13 @@ https://arxiv.org/abs/1704.03489
 
 ![image.png](images/CNN-SLAM%20Real-time%20dense%20monocular%20SLAM%20with%20learn%201b471bdab3cf8032acd7f0ecedd731a4/image%201.png)
 
-**CNN-SLAM: Real-time Dense Monocular SLAM with Learned Depth Prediction** is a research paper that explores the combination of deep learning-based depth prediction with traditional SLAM (Simultaneous Localization and Mapping) methods. Below is a summary of its key contributions:
+**CNN-SLAM: Real-time Dense Monocular SLAM with Learned Depth Prediction** is a research paper that explores the combination of deep learning-based depth prediction with traditional SLAM (Simultaneous Localization and Mapping) methods(LSD-SLAM). Below is a summary of its key contributions:
 
 ### **Key Concepts**
 
 1. **Monocular SLAM**: Traditional SLAM methods using a single camera suffer from scale drift and challenges in depth estimation due to lack of direct depth information.
 2. **Depth Prediction via CNNs**: The paper leverages convolutional neural networks (CNNs) trained on large datasets to predict depth from a single image.
-3. **Fusion of Deep Learning & SLAM**: It integrates CNN-based depth estimation into a SLAM pipeline to improve depth accuracy and overcome scale drift.
+3. **Fusion of Deep Learning & SLAM**: It integrates CNN-based depth estimation into a LSD-SLAM pipeline to improve depth accuracy and overcome scale drift.
 
 ### **Main Contributions**
 
@@ -25,7 +25,7 @@ https://arxiv.org/abs/1704.03489
 2. **Dense Depth Map Refinement**:
     - The estimated depth maps are refined using a probabilistic framework to improve consistency with geometric constraints.
 3. **Optimization-based SLAM**:
-    - Traditional SLAM techniques such as **pose graph optimization** and **bundle adjustment** are used to refine camera pose and depth.
+    - LSD-SLAM techniques such as **pose graph optimization** and **bundle adjustment** are used to refine camera pose and depth.
     - CNN-based depth predictions act as a prior to regularize depth estimation and prevent scale drift.
 4. **Real-time Performance**:
     - The method is designed to work in real time with computational efficiency improvements, making it suitable for real-world applications.
