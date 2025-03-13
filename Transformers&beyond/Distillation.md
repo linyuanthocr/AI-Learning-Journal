@@ -2,9 +2,9 @@
 
 Distilling the Knowledge in a Neural Network
 
-![IMG_1932.jpeg](Distillation%209d43d07c029d4eaebc8aac0ca6f85701/IMG_1932.jpeg)
+![IMG_1932.jpeg](images/Distillation%209d43d07c029d4eaebc8aac0ca6f85701/IMG_1932.jpeg)
 
-![IMG_1933.jpeg](Distillation%209d43d07c029d4eaebc8aac0ca6f85701/IMG_1933.jpeg)
+![IMG_1933.jpeg](images/Distillation%209d43d07c029d4eaebc8aac0ca6f85701/IMG_1933.jpeg)
 
 **结论**
 

@@ -12,20 +12,20 @@ The paper highlights the importance of a large and consistent dictionary in cont
 
 As you can see in the diagram, MoCo uses two encoders: a **query encoder** and a **key encoder**. The query encoder processes the current input image, while the key encoder processes the images in the queue. The momentum encoder updates the key encoder slowly, preventing drastic changes and ensuring consistency in the dictionary.
 
-![image.png](MOCO_%20Momentum%20Contrast%20for%20Unsupervised%20Visual%20Re%2014571bdab3cf8064948ec7c9575c2757/image.png)
+![image.png](images/MOCO_%20Momentum%20Contrast%20for%20Unsupervised%20Visual%20Re%2014571bdab3cf8064948ec7c9575c2757/image.png)
 
 ### **1. Key Idea**
 
 MoCo builds a **dynamic dictionary** with a queue and a momentum-based encoder to facilitate contrastive learning. The core idea is to maintain a consistent set of **negative samples** across iterations, even when using small batch sizes, thereby decoupling the number of negatives from the batch size.
 
-![image.png](MOCO_%20Momentum%20Contrast%20for%20Unsupervised%20Visual%20Re%2014571bdab3cf8064948ec7c9575c2757/image%201.png)
+![image.png](images/MOCO_%20Momentum%20Contrast%20for%20Unsupervised%20Visual%20Re%2014571bdab3cf8064948ec7c9575c2757/image%201.png)
 
-![image.png](MOCO_%20Momentum%20Contrast%20for%20Unsupervised%20Visual%20Re%2014571bdab3cf8064948ec7c9575c2757/image%202.png)
+![image.png](images/MOCO_%20Momentum%20Contrast%20for%20Unsupervised%20Visual%20Re%2014571bdab3cf8064948ec7c9575c2757/image%202.png)
 
-![image.png](MOCO_%20Momentum%20Contrast%20for%20Unsupervised%20Visual%20Re%2014571bdab3cf8064948ec7c9575c2757/image%203.png)
+![image.png](images/MOCO_%20Momentum%20Contrast%20for%20Unsupervised%20Visual%20Re%2014571bdab3cf8064948ec7c9575c2757/image%203.png)
 
-![image.png](MOCO_%20Momentum%20Contrast%20for%20Unsupervised%20Visual%20Re%2014571bdab3cf8064948ec7c9575c2757/image%204.png)
+![image.png](images/MOCO_%20Momentum%20Contrast%20for%20Unsupervised%20Visual%20Re%2014571bdab3cf8064948ec7c9575c2757/image%204.png)
 
-![image.png](MOCO_%20Momentum%20Contrast%20for%20Unsupervised%20Visual%20Re%2014571bdab3cf8064948ec7c9575c2757/image%205.png)
+![image.png](images/MOCO_%20Momentum%20Contrast%20for%20Unsupervised%20Visual%20Re%2014571bdab3cf8064948ec7c9575c2757/image%205.png)
 
-![image.png](MOCO_%20Momentum%20Contrast%20for%20Unsupervised%20Visual%20Re%2014571bdab3cf8064948ec7c9575c2757/image%206.png)
+![image.png](images/MOCO_%20Momentum%20Contrast%20for%20Unsupervised%20Visual%20Re%2014571bdab3cf8064948ec7c9575c2757/image%206.png)

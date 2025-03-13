@@ -21,22 +21,22 @@ Mamba Modeling with **Selective State Spaces,** in which transition from time st
 
 Fully recurrent model
 
-![Untitled](Mamba%205b46d1e2781c4f9780d1950d556a1a2c/Untitled%201.png)
+![Untitled](images/Mamba%205b46d1e2781c4f9780d1950d556a1a2c/Untitled%201.png)
 
 ### Selective SSM
 
-![Untitled](Mamba%205b46d1e2781c4f9780d1950d556a1a2c/Untitled%202.png)
+![Untitled](images/Mamba%205b46d1e2781c4f9780d1950d556a1a2c/Untitled%202.png)
 
 ### **Formula**
 
-![Untitled](Mamba%205b46d1e2781c4f9780d1950d556a1a2c/Untitled%203.png)
+![Untitled](images/Mamba%205b46d1e2781c4f9780d1950d556a1a2c/Untitled%203.png)
 
 ### Difference with S4
 
-![Untitled](Mamba%205b46d1e2781c4f9780d1950d556a1a2c/Untitled%204.png)
+![Untitled](images/Mamba%205b46d1e2781c4f9780d1950d556a1a2c/Untitled%204.png)
 
 ### Overview of Selective Scan: Hardware-Aware State Expansion
 
-![Untitled](Mamba%205b46d1e2781c4f9780d1950d556a1a2c/Untitled%205.png)
+![Untitled](images/Mamba%205b46d1e2781c4f9780d1950d556a1a2c/Untitled%205.png)
 
 **Prefix Sum**
