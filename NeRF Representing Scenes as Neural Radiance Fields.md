@@ -12,7 +12,7 @@ Views are synthesized by querying the **5D coordinates** along the camera rays a
 2. A **differentiable rendering** procedure based on classical volume rendering techniques, which we use to optimize these representations from standard RGB images. This includes **a hierarchical sampling strategy** to allocate the MLP’s capacity towards space with visible scene content.
     1. classical volume rendering
         
-        ![image.png](NeRF%20Representing%20Scenes%20as%20Neural%20Radiance%20Fields%201b571bdab3cf804a9f26df57cb745cf0/image%201.png)
+        ![image.png](images/NeRF%20Representing%20Scenes%20as%20Neural%20Radiance%20Fields%201b571bdab3cf804a9f26df57cb745cf0/image%201.png)
         
     2. stratified sampling + quadrature rule:
         
