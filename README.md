@@ -15,4 +15,4 @@
 ![Pytorch](https://img.shields.io/badge/PyTorch-EE4C2C?style=flat&logo=pytorch&logoColor=white)
 
 📊 **GitHub Stats**  
-![Yuan's GitHub stats](https://github-readme-stats.vercel.app/api?username=your-username&show_icons=true&theme=dracula)
+![Yuan's GitHub stats](https://github-readme-stats.vercel.app/api?username=linyuanthocr&show_icons=true&theme=dracula)
