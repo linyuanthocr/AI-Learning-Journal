@@ -10,11 +10,11 @@ RAG survey
 
 The progression of RAG paradigms: Naive RAG, the Advanced RAG, and the Modular RAG.
 
-![Untitled](RAG%20survey%20900e4430df6343fb9f79cbb119b0c4b2/Untitled.png)
+![Untitled](images/RAG%20survey%20900e4430df6343fb9f79cbb119b0c4b2/Untitled.png)
 
 # Definition
 
-![Untitled](RAG%20survey%20900e4430df6343fb9f79cbb119b0c4b2/Untitled%201.png)
+![Untitled](images/RAG%20survey%20900e4430df6343fb9f79cbb119b0c4b2/Untitled%201.png)
 
 ChatGPT as the most renowned and widely utilized LLM, constrained by its pretraining data, lacks knowledge of re- cent events. RAG addresses this gap by retrieving up-to-date document excerpts from external knowledge bases. In this in- stance, it procures a selection of news articles pertinent to the inquiry. TheseThese articles, alongside the initial question, are then amalgamated into an enriched prompt that enables ChatGPT to synthesize an informed response.
 
@@ -71,7 +71,7 @@ How to Merge the retrieval with the query as an input into LLMs while addressing
 
 It allows for either a serialized pipeline or an end-to-end training approach across multiple modules
 
-![Untitled](RAG%20survey%20900e4430df6343fb9f79cbb119b0c4b2/Untitled%202.png)
+![Untitled](images/RAG%20survey%20900e4430df6343fb9f79cbb119b0c4b2/Untitled%202.png)
 
 ### New Modules
 

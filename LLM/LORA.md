@@ -8,7 +8,9 @@ Many applications in natural language processing rely on adapting one large-scal
 
 #### Problem statement
 
-![83231da55295e96361c22fa4a93e18be.png](evernotecid://0AE6B2C5-79A7-417B-BA48-0887E4E60256/appyinxiangcom/7849907/ENResource/p3053)
+<p align="center">
+    <img src="images/LORA%20be6c120ef2054aa49adcb865693434f1/74D66DE1-9903-4094-907C-C4FE05F8A0C9.png"  width="700">
+</p>
 
 #### Existing methods
 Two major methods to tackle this problem:
@@ -18,7 +20,9 @@ Two major methods to tackle this problem:
 #### Method
 1. LOW-RANK-PARAMETRIZED UPDATE MATRICES
 
-![cef92944db83b51045051195cf02775d.png](evernotecid://0AE6B2C5-79A7-417B-BA48-0887E4E60256/appyinxiangcom/7849907/ENResource/p3052)
+<p align="center">
+    <img src="images/LORA%20be6c120ef2054aa49adcb865693434f1/2DE04CF7-BAD5-4E15-A6E9-D23FB235004F.png"  width="700">
+</p>
 
 
 For a pre-trained weight matrix $W_0 ∈ R_d×k$, we constrain its update by representing the latter with a low-rank decompostion:
