@@ -29,7 +29,7 @@ Hi, there 👋
 - 🤖 10+ years in **SLAM, Visual Odometry, VIO, 3D Reconstruction, Perception, AI & Robotics**  
 - 🔬 Ex-Baidu (**AR**) | Ex-Lenovo (**Robot Perception**)  
 - 🛠 Developed **real-time camera pose estimation solutions deployed on millions of devices**  
-- 📜 **20 patents granted** | Multiple awards | Open-source contributor  
+- 📜 **[20 patents granted](https://docs.google.com/document/d/1JQaRMtpPIr3B12LFzQswhm_YDIG4PWs8QIXlTV7AoW0/edit?usp=sharing)** | [Kaggle master](https://www.kaggle.com/yuanlin08) | Open-source contributor  
 - 🌎 Find me at [LinkedIn](https://www.linkedin.com/in/yuan-lin-6915a7a4/)  
 
 
