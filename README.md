@@ -25,10 +25,13 @@
 Hi, there 👋
 
 🚀 **About Me**  
-- 🏆 Machine Learning & Computer Vision Enthusiast  
-- 📖 Currently exploring 3D Face-related technologies  
-- 💡 Love building AI solutions and contributing to open-source  
-- 🌎 Find me at [LinkedIn](your-linkedin-url)
+- 🎯 Senior Computer Vision & ML Engineer | PhD, Tsinghua University  
+- 🤖 10+ years in **SLAM, Visual Odometry, VIO, 3D Reconstruction, Perception, AI & Robotics**  
+- 🔬 Ex-Baidu (**AR**) | Ex-Lenovo (**Robot Perception**)  
+- 🛠 Developed **real-time camera pose estimation solutions deployed on millions of devices**  
+- 📜 **20 patents granted** | Multiple awards | Open-source contributor  
+- 🌎 Find me at [LinkedIn](https://www.linkedin.com/in/yuan-lin-6915a7a4/)  
+
 
 🛠 **Tech Stack**  
 ![C++](https://img.shields.io/badge/C++-00599C?style=flat&logo=cplusplus&logoColor=white)
