@@ -39,8 +39,7 @@ The goal is to transfer the knowledge learned by the teacher network to the stud
 
 In the soft target approach, the output probabilities of the teacher network are smoothed by applying a temperature parameter to the softmax function. This results in a more informative and less rigid target distribution.
 
-![499478dc346952a1f921a43f4cc6d3e3.webp](evernotecid://0AE6B2C5-79A7-417B-BA48-0887E4E60256/appyinxiangcom/7849907/ENResource/p3054)
-
+![499478dc346952a1f921a43f4cc6d3e3.webp](images/dis_knowledge.webp)
 ### Temperature selection
 
 1. At lower temperatures, distillation pays much less attention to matching logits that are much more negative than the average
