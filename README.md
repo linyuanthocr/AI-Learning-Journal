@@ -12,6 +12,7 @@
     - [GPT2 code.pdf](LLM/GPT2%20code.pdf)
     - [PaLM- Scaling Language Modeling with Pathways.pdf](LLM/PaLM-%20Scaling%20Language%20Modeling%20with%20Pathways.pdf)
     - [LORA.md](LLM/LORA.md)
+    - [Generalized Language Models.md](LLM/Generalized%20Language%20Models.md)
     - [PALM.md](LLM/PALM.md)
     - [Self_instruct.md](LLM/Self_instruct.md)
     - [RAG survey.md](LLM/RAG%20survey.md)
@@ -19,8 +20,6 @@
     - [Instruct GPT.md](LLM/Instruct%20GPT.md)
     - [Prompt Engineering | Lil'Log.pdf](LLM/Prompt%20Engineering%20|%20Lil'Log.pdf)
     - [LLaMA- Open and Efficient Foundation Language Models.pdf](LLM/LLaMA-%20Open%20and%20Efficient%20Foundation%20Language%20Models.pdf)
-      - **Instruct GPT 485a15aef4474679bda9a098b870f6e0/**
-        - [Generalized Language Models.md](LLM/images/Instruct%20GPT%20485a15aef4474679bda9a098b870f6e0/Generalized%20Language%20Models.md)
   - **CNN_DL/**
     - [LightGlue.md](CNN_DL/LightGlue.md)
     - [Faster R-CNN -tensorflow- _datasets.pdf](CNN_DL/Faster%20R-CNN%20-tensorflow-%20_datasets.pdf)
