@@ -1,6 +1,6 @@
 # 3D human generation project
 
-1. High-Fidelity 3D Face Generation from Natural Language Descriptions
+High-Fidelity 3D Face Generation from Natural Language Descriptions
 
 [https://github.com/zhuhao-nju/describe3d](https://github.com/zhuhao-nju/describe3d)
 
