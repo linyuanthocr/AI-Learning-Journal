@@ -34,8 +34,6 @@ https://headgap.github.io/
 
 [HeadGAP](HeadGAP.md)
 
-p
-
 https://arxiv.org/abs/2501.09978
 
 https://xiangyueliu.github.io/GaussianAvatar-Editor/
@@ -93,8 +91,6 @@ https://flame.is.tue.mpg.de/
 [https://github.com/LizhenWangT/FaceVerse](https://github.com/LizhenWangT/FaceVerse)
 
 Pixel Codec Avatars
-
-https://scontent-sjc3-1.xx.fbcdn.net/v/t39.8562-6/10000000_1293628784402270_8873066841165531424_n.pdf?_nc_cat=104&ccb=1-7&_nc_sid=e280be&_nc_ohc=f7qs4tEj1JEQ7kNvgESUFq8&_nc_oc=AdhSRM2X2bJJKKNAxGBnsjVdIj5JucVPLfOsA5khQzAnBYnP9vKUsPPsE13vV1i-n6o&_nc_zt=14&_nc_ht=scontent-sjc3-1.xx&_nc_gid=AEZisLeqcEVvrgVOuigQKAI&oh=00_AYAagHHkfmVIFL7UZPMXePmiwxofpd78-Hz905odDbVdtw&oe=67C4A035
 
 [https://github.com/facebookresearch/ava-256](https://github.com/facebookresearch/ava-256)
 
