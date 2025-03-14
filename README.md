@@ -1,31 +1,6 @@
 # Project Directory Structure
 
-- **./**
-  - [README.md](README.md)
-  - **Generative AI/**
-    - [Training lora.md](Generative%20AI/Training%20lora.md)
-    - [12 days of no-cost generative AI training Google.md](Generative%20AI/12%20days%20of%20no-cost%20generative%20AI%20training%20Google.md)
-    - [Lora training.md](Generative%20AI/Lora%20training.md)
-    - [Generative AI.md](Generative%20AI/Generative%20AI.md)
-    - [Generative AI for Beginners.md](Generative%20AI/Generative%20AI%20for%20Beginners.md)
-  - **LLM/**
-    - [GPT2 code.pdf](LLM/GPT2%20code.pdf)
-    - [PaLM- Scaling Language Modeling with Pathways.pdf](LLM/PaLM-%20Scaling%20Language%20Modeling%20with%20Pathways.pdf)
-    - [LORA.md](LLM/LORA.md)
-    - [Generalized Language Models.md](LLM/Generalized%20Language%20Models.md)
-    - [PALM.md](LLM/PALM.md)
-    - [Self_instruct.md](LLM/Self_instruct.md)
-    - [RAG survey.md](LLM/RAG%20survey.md)
-    - [GPT序列.pdf](LLM/GPT序列.pdf)
-    - [Instruct GPT.md](LLM/Instruct%20GPT.md)
-    - [Prompt Engineering | Lil'Log.pdf](LLM/Prompt%20Engineering%20|%20Lil'Log.pdf)
-    - [LLaMA- Open and Efficient Foundation Language Models.pdf](LLM/LLaMA-%20Open%20and%20Efficient%20Foundation%20Language%20Models.pdf)
-    - **images/**
   - **CNN_DL/**
-    - [LightGlue.md](CNN_DL/LightGlue.md)
-    - [Faster R-CNN -tensorflow- _datasets.pdf](CNN_DL/Faster%20R-CNN%20-tensorflow-%20_datasets.pdf)
-    - [Focal loss with multi-label implemented in keras.pdf](CNN_DL/Focal%20loss%20with%20multi-label%20implemented%20in%20keras.pdf)
-    - [MAE -Masked autoencoders are scalable vision learners-.pdf](CNN_DL/MAE%20-Masked%20autoencoders%20are%20scalable%20vision%20learners-.pdf)
     - [ResNet.md](CNN_DL/ResNet.md)
     - [deep learning on mobiles.md](CNN_DL/deep%20learning%20on%20mobiles.md)
     - [Early stopping at minimum loss.pdf](CNN_DL/Early%20stopping%20at%20minimum%20loss.pdf)
@@ -39,6 +14,10 @@
     - [Finding Good Learning Rate and The One Cycle Policy..pdf](CNN_DL/Finding%20Good%20Learning%20Rate%20and%20The%20One%20Cycle%20Policy..pdf)
     - [RESNET.pdf](CNN_DL/RESNET.pdf)
     - [Bidirectional LSTM.md](CNN_DL/Bidirectional%20LSTM.md)
+    - [LightGlue.md](CNN_DL/LightGlue.md)
+    - [Faster R-CNN -tensorflow- _datasets.pdf](CNN_DL/Faster%20R-CNN%20-tensorflow-%20_datasets.pdf)
+    - [Focal loss with multi-label implemented in keras.pdf](CNN_DL/Focal%20loss%20with%20multi-label%20implemented%20in%20keras.pdf)
+    - [MAE -Masked autoencoders are scalable vision learners-.pdf](CNN_DL/MAE%20-Masked%20autoencoders%20are%20scalable%20vision%20learners-.pdf)
     - **images/**
   - **VO_VIO_VSLAM/**
     - [SVO mono code review.md](VO_VIO_VSLAM/SVO%20mono%20code%20review.md)
@@ -178,3 +157,23 @@
     - **images/**
       - **3D human generation project/**
         - [IDEAS.md](3D%20Avatar/images/3D%20human%20generation%20project%201a571bdab3cf80168359e46bb6a8d0b4/IDEAS%201a771bdab3cf80278398e25bf7099fd3.md)
+
+  - **LLM/**
+    - [GPT2 code.pdf](LLM/GPT2%20code.pdf)
+    - [PaLM- Scaling Language Modeling with Pathways.pdf](LLM/PaLM-%20Scaling%20Language%20Modeling%20with%20Pathways.pdf)
+    - [LORA.md](LLM/LORA.md)
+    - [Generalized Language Models.md](LLM/Generalized%20Language%20Models.md)
+    - [PALM.md](LLM/PALM.md)
+    - [Self_instruct.md](LLM/Self_instruct.md)
+    - [RAG survey.md](LLM/RAG%20survey.md)
+    - [GPT序列.pdf](LLM/GPT序列.pdf)
+    - [Instruct GPT.md](LLM/Instruct%20GPT.md)
+    - [Prompt Engineering | Lil'Log.pdf](LLM/Prompt%20Engineering%20|%20Lil'Log.pdf)
+    - [LLaMA- Open and Efficient Foundation Language Models.pdf](LLM/LLaMA-%20Open%20and%20Efficient%20Foundation%20Language%20Models.pdf)
+      
+  - **Generative AI/**
+    - [Training lora.md](Generative%20AI/Training%20lora.md)
+    - [12 days of no-cost generative AI training Google.md](Generative%20AI/12%20days%20of%20no-cost%20generative%20AI%20training%20Google.md)
+    - [Lora training.md](Generative%20AI/Lora%20training.md)
+    - [Generative AI.md](Generative%20AI/Generative%20AI.md)
+    - [Generative AI for Beginners.md](Generative%20AI/Generative%20AI%20for%20Beginners.md)
