@@ -146,17 +146,18 @@
             - [Adding Conditional Control to Text-to-Image Diffus.md](Transformers&beyond/images/Multimodal%20Foundation%20Models%20eb1d711009044c5b8f3e782c1dad1d9e/Visual%20generation%20bd9cf610d0e946e58ff02c22d93bcb93/Spatial%20Controllable%20Generation%20357b6ceca40c4a15b45416832f2e7dc7/Adding%20Conditional%20Control%20to%20Text-to-Image%20Diffus%20a2b155fd5a084973bf192419ae714678.md)
       - **Transformer Family 2 0/**
         - [Swin Transformer.md](Transformers&beyond/images/Transformer%20Family%202%200%20914e4aab3f78490bbf8769d797f92961/Swin%20Transformer%203f145133347d4864bad610512b237b2d.md)
-  - **3D Avatar/**
-    - [monocular depth estimation.md](3D%20Avatar/monocular%20depth%20estimation.md)
-    - [Gaussian Head Avatar.md](3D%20Avatar/Gaussian%20Head%20Avatar.md)
-    - [FLAME：Faces Learned with an Articulated Model.md](3D%20Avatar/FLAME：Faces%20Learned%20with%20an%20Articulated%20Model.md)
-    - [HeadGAP.md](3D%20Avatar/HeadGAP.md)
-    - [Humanoid robot.md](3D%20Avatar/Humanoid%20robot.md)
-    - [3D human generation project.md](3D%20Avatar/3D%20human%20generation%20project.md)
-    - [NeRF Representing Scenes as Neural Radiance Fields.md](3D%20Avatar/NeRF%20Representing%20Scenes%20as%20Neural%20Radiance%20Fields.md)
+  - **3D Reconstruction/**
+    - [monocular depth estimation.md](3D%20reconstruction/monocular%20depth%20estimation.md)
+    - [Gaussian Head Avatar.md](3D%20reconstruction/Gaussian%20Head%20Avatar.md)
+    - [FLAME：Faces Learned with an Articulated Model.md](3D%20reconstruction/FLAME：Faces%20Learned%20with%20an%20Articulated%20Model.md)
+    - [HeadGAP.md](3D%20reconstruction/HeadGAP.md)
+    - [Humanoid robot.md](3D%20reconstruction/Humanoid%20robot.md)
+    - [3D human generation project.md](3D%20reconstruction/3D%20human%20generation%20project.md)
+    - [NeRF Representing Scenes as Neural Radiance Fields.md](3D%20reconstruction/NeRF%20Representing%20Scenes%20as%20Neural%20Radiance%20Fields.md)
+    - [Multiview 3D reconstruction with DL.md](3D%20reconstruction/Multiview%203D%20reconstruction%20with%20DL.md)
     - **images/**
       - **3D human generation project/**
-        - [IDEAS.md](3D%20Avatar/images/3D%20human%20generation%20project%201a571bdab3cf80168359e46bb6a8d0b4/IDEAS%201a771bdab3cf80278398e25bf7099fd3.md)
+        - [IDEAS.md](3D%20reconstruction/images/3D%20human%20generation%20project%201a571bdab3cf80168359e46bb6a8d0b4/IDEAS%201a771bdab3cf80278398e25bf7099fd3.md)
 
   - **LLM/**
     - [GPT2 code.pdf](LLM/GPT2%20code.pdf)
