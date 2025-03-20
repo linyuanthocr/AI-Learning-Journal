@@ -14,13 +14,13 @@ We have seen amazing progress in NLP in 2018. Large-scale pre-trained language m
 
 [https://arxiv.org/pdf/1802.05365.pdf](https://arxiv.org/pdf/1802.05365.pdf)
 
-![Untitled](Generalized%20Language%20Models%200d446cc7fa09493c879d35570bb17c21/Untitled.png)
+![Untitled](images/Generalized%20Language%20Models%200d446cc7fa09493c879d35570bb17c21/Untitled.png)
 
-![Untitled](Generalized%20Language%20Models%200d446cc7fa09493c879d35570bb17c21/Untitled%201.png)
+![Untitled](images/Generalized%20Language%20Models%200d446cc7fa09493c879d35570bb17c21/Untitled%201.png)
 
 [Bidirectional LSTM review](https://www.notion.so/Bidirectional-LSTM-f373fb0a8a9b4b329ec2588b0e1504c2?pvs=21)
 
-![Untitled](Generalized%20Language%20Models%200d446cc7fa09493c879d35570bb17c21/Untitled%202.png)
+![Untitled](images/Generalized%20Language%20Models%200d446cc7fa09493c879d35570bb17c21/Untitled%202.png)
 
 # GPT
 
@@ -37,9 +37,9 @@ Compared to the [original transformer](https://arxiv.org/abs/1706.03762) archi
 
 This model applies multiple transformer blocks over the embeddings of input sequences. Each block contains **a masked *multi-headed self-attention* layer and a *pointwise feed-forward* layer**. The final output produces a distribution over target tokens after softmax normalization.
 
-![Untitled](Generalized%20Language%20Models%200d446cc7fa09493c879d35570bb17c21/Untitled%203.png)
+![Untitled](images/Generalized%20Language%20Models%200d446cc7fa09493c879d35570bb17c21/Untitled%203.png)
 
-![Untitled](Generalized%20Language%20Models%200d446cc7fa09493c879d35570bb17c21/Untitled%204.png)
+![Untitled](images/Generalized%20Language%20Models%200d446cc7fa09493c879d35570bb17c21/Untitled%204.png)
 
 # Byte Pair Encoding
 
@@ -49,9 +49,9 @@ This model applies multiple transformer blocks over the embeddings of input sequ
 
 The most substantial upgrade that OpenAI GPT proposed is to **get rid of the task-specific model and use the pre-trained language model directly**!
 
-![Untitled](Generalized%20Language%20Models%200d446cc7fa09493c879d35570bb17c21/Untitled%205.png)
+![Untitled](images/Generalized%20Language%20Models%200d446cc7fa09493c879d35570bb17c21/Untitled%205.png)
 
-![Untitled](Generalized%20Language%20Models%200d446cc7fa09493c879d35570bb17c21/Untitled%206.png)
+![Untitled](images/Generalized%20Language%20Models%200d446cc7fa09493c879d35570bb17c21/Untitled%206.png)
 
 **Summary**: It is super neat and encouraging to see that such a general framework is capable to beat SOTA on most language tasks at that time (June 2018). At the first stage, generative pre-training of a language model can absorb as much free text as possible. Then at the second stage, the model is fine-tuned on specific tasks with a small labeled dataset and a minimal set of new parameters to learn.
 
@@ -97,7 +97,7 @@ Compared to GPT, other than having many more transformer layers and parameters, 
 
 The language model **T5** is short for **“Text-to-Text Transfer Transformer”** ([Raffel et al., 2020](https://arxiv.org/abs/1910.10683)). The encoder-decoder implementation follows the [original Transformer](https://arxiv.org/abs/1706.03762) architecture: tokens → embedding → encoder → decoder → output. T5 adopts the framework “Natural Language Decathlon” ([McCann et al., 2018](https://arxiv.org/abs/1806.08730)), where many common NLP tasks are translated into question-answering over a context. Instead of an explicit QA format, T5 uses short task prefixes to distinguish task intentions and separately fine-tunes the model on every individual task. The text-to-text framework enables easier transfer learning evaluation with the same model on a diverse set of tasks.
 
-![Untitled](Generalized%20Language%20Models%200d446cc7fa09493c879d35570bb17c21/Untitled%207.png)
+![Untitled](images/Generalized%20Language%20Models%200d446cc7fa09493c879d35570bb17c21/Untitled%207.png)
 
 The model is trained on Web corpus extracted from Apr 2019 with various filters applied. The model is fine-tuned for each downstream task separately via “adapter layers” (add an extra layer for training) or “gradual unfreezing” (see [ULMFiT](https://lilianweng.github.io/posts/2019-01-31-lm/#ulmfit)). Both fine-tuning approaches only update partial parameters while keeping the majority of the model parameters unchanged. T5-11B achieved SOTA results on many NLP tasks.
 
@@ -109,17 +109,17 @@ As the authors mentioned in the paper “…our goal is not to propose new metho
 
 **GPT-3** ([Brown et al., 2020](https://arxiv.org/abs/2005.14165)) has the same architecture as [GPT-2](https://lilianweng.github.io/posts/2019-01-31-lm/#gpt-2) but contains 175B parameters, 10x larger than GPT-2 (1.5B). In addition, GPT-3 uses alternating dense and locally banded sparse attention patterns, same as in [sparse transformer](https://lilianweng.github.io/posts/2020-04-07-the-transformer-family/#sparse-attention-matrix-factorization-sparse-transformers). In order to fit such a huge model across multiple GPUs, GPT-3 is trained with partitions along both width and depth dimension. The training data is a filtered version of Common Crawl mixed with a few other high-quality curated datasets. To avoid the contamination that downstream tasks might appear in the training data, the authors attempted to remove all the overlaps with all the studied benchmark dataset from the training dataset. Unfortunately the filtering process is not perfect due to a bug.
 
-![Untitled](Generalized%20Language%20Models%200d446cc7fa09493c879d35570bb17c21/Untitled%208.png)
+![Untitled](images/Generalized%20Language%20Models%200d446cc7fa09493c879d35570bb17c21/Untitled%208.png)
 
 For all the downstream evaluation, GPT-3 is tested in the few-shot setting without any gradient-based fine-tuning. ***Here the few-shot examples are provided as part of the prompt***. GPT-3 achieves strong performance on many NLP datasets, comparable with fine-tuned BERT models.
 
-![Untitled](Generalized%20Language%20Models%200d446cc7fa09493c879d35570bb17c21/Untitled%209.png)
+![Untitled](images/Generalized%20Language%20Models%200d446cc7fa09493c879d35570bb17c21/Untitled%209.png)
 
 # Instruct GPT (GPT 3.5)
 
 RLHF: reinforcement learning human feedback
 
-![Untitled](Generalized%20Language%20Models%200d446cc7fa09493c879d35570bb17c21/Untitled%2010.png)
+![Untitled](images/Generalized%20Language%20Models%200d446cc7fa09493c879d35570bb17c21/Untitled%2010.png)
 
 Technical keypoints:
 
@@ -128,9 +128,9 @@ Technical keypoints:
 3. how to train a reward model (RM)
 4. how to use RM for reinforcement learning
 
-![Untitled](Generalized%20Language%20Models%200d446cc7fa09493c879d35570bb17c21/Untitled%2011.png)
+![Untitled](images/Generalized%20Language%20Models%200d446cc7fa09493c879d35570bb17c21/Untitled%2011.png)
 
-![Untitled](Generalized%20Language%20Models%200d446cc7fa09493c879d35570bb17c21/Untitled%2012.png)
+![Untitled](images/Generalized%20Language%20Models%200d446cc7fa09493c879d35570bb17c21/Untitled%2012.png)
 
 # 3 Models in GPT 3.5
 
@@ -144,7 +144,7 @@ We fine-tune GPT-3 on our labeler demonstrations using supervised learning. We t
 
 **Starting from the SFT model with the final unembedding layer removed, we trained a model to take in a prompt and response, and output a scalar reward.** In this paper we only use **6B RMs**, as this saves a lot of compute, and we found that 175B RM training could be unstable and thus was less suitable to be used as the value function during RL (see Appendix C for more details).
 
-![Untitled](Generalized%20Language%20Models%200d446cc7fa09493c879d35570bb17c21/Untitled%2013.png)
+![Untitled](images/Generalized%20Language%20Models%200d446cc7fa09493c879d35570bb17c21/Untitled%2013.png)
 
 K = 9, pairwise comparison; (Reason: 1. a little more labeling time, but with huge pair comparison: 2x labeling time, 9x examples. 2. loss calculate efficient: 9 forward & backward calculates for 36 items. 3. less overfitting)
 
@@ -152,7 +152,7 @@ K = 9, pairwise comparison; (Reason: 1. a little more labeling time, but with hu
 
 PPO(强化学习里面的一种算法)
 
-![Untitled](Generalized%20Language%20Models%200d446cc7fa09493c879d35570bb17c21/Untitled%2014.png)
+![Untitled](images/Generalized%20Language%20Models%200d446cc7fa09493c879d35570bb17c21/Untitled%2014.png)
 
 Here using GPT-3 SFT to initialize the RL model, $\pi^{RL}_{\phi} = \pi^{SFT}$.  
 
