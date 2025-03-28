@@ -118,38 +118,46 @@ However, various techniques and learning-based approaches attempt to infer *rela
 
 **K Matrix (Intrinsic Matrix):**
 
-<span class="math-block">\\mathbf\{K\} \= \\begin\{bmatrix\}
-f\_x & s & c\_x \\\\
-0 & f\_y & c\_y \\\\
+$$
+\mathbf{K} = \begin{bmatrix}
+f_x & s & c_x \\
+0 & f_y & c_y \\
 0 & 0 & 1
-\\end\{bmatrix\}</span>
+\end{bmatrix}
+$$
 
 **Distortion Coefficients (using the Brown-Conrady model, a common one):**
 
-The distorted image coordinates <span class="math-inline">\(u\_d, v\_d\)</span> are related to the ideal (undistorted) normalized image coordinates <span class="math-inline">\(x, y\)</span> as follows:
+The distorted image coordinates \(u_d, v_d\) are related to the ideal (undistorted) normalized image coordinates \(x, y\) as follows:
 
 1.  **Normalized Image Coordinates:**
-    $$ x = (u - c_x) / f_x $$
-    $$ y = (v - c_y) / f_y $$
-
+    
+    $$x = (u - c_x) / f_x$$ \
+    $$y = (v - c_y) / f_y$$
+    
 2.  **Radial Distortion:**
-    $$ r^2 = x^2 + y^2 $$
-    $$ x_{corrected} = x (1 + k_1 r^2 + k_2 r^4 + k_3 r^6 + ...) $$
-    $$ y_{corrected} = y (1 + k_1 r^2 + k_2 r^4 + k_3 r^6 + ...) $$
-    where <span class="math-inline">k\_1, k\_2, k\_3</span> are the first three radial distortion coefficients. Higher-order terms (<span class="math-inline">k\_4, k\_5, k\_6</span>) can be included for more complex lenses.
+   
+    $$r^2 = x^2 + y^2$$ \
+    $$x_{corrected} = x (1 + k_1 r^2 + k_2 r^4 + k_3 r^6 + ...)$$ \
+    $$y_{corrected} = y (1 + k_1 r^2 + k_2 r^4 + k_3 r^6 + ...)$$ \
+    where \(k_1, k_2, k_3\) are the first three radial distortion coefficients. Higher-order terms (\(k_4, k_5, k_6\)) can be included for more complex lenses.
 
 3.  **Tangential Distortion:**
-    $$ x_{corrected} = x_{corrected} + (2 p_1 xy + p_2 (r^2 + 2 x^2)) $$
-    $$ y_{corrected} = y_{corrected} + (p_1 (r^2 + 2 y^2) + 2 p_2 xy) $$
-    where <span class="math-inline">p\_1, p\_2</span> are the tangential distortion coefficients.
+   
+    $$x_{corrected} = x_{corrected} + (2 p_1 xy + p_2 (r^2 + 2 x^2))$$\
+    $$y_{corrected} = y_{corrected} + (p_1 (r^2 + 2 y^2) + 2 p_2 xy)$$\
+    where \(p_1, p_2\) are the tangential distortion coefficients.
 
 4.  **Back to Pixel Coordinates:**
-    $$ u_d = f_x x_{corrected} + c_x $$
-    $$ v_d = f_y y_{corrected} + c_y $$
+   
+    $$u_d = f_x x_{corrected} + c_x$$ \
+    $$v_d = f_y y_{corrected} + c_y$$ \
+    The set of distortion coefficients is typically represented as a vector:
+    $$
+    \mathbf{d} = [k_1, k_2, p_1, p_2, k_3, ...]
+    $$
 
-The set of distortion coefficients is typically represented as a vector:
-
-<span class="math-block">\\mathbf\{d\} \= \[k\_1, k\_2, p\_1, p\_2, k\_3, \.\.\.\]</span>
+**Key Change:** I removed the leading non-breaking spaces and the indentation within the code blocks for the tangential distortion and back-to-pixel coordinates sections. This ensures that the `$$` delimiters are at the beginning of the line within the code block, allowing for correct MathJax rendering.
 
 Camera calibration is a fundamental step in visual SLAM as it allows for accurate mapping between 3D world points and 2D image pixels, which is essential for tasks like triangulation, pose estimation, and map building.
 
