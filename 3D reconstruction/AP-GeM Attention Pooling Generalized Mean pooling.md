@@ -17,7 +17,7 @@ The **AP-GeM** (Attention Pooling Generalized Mean pooling) is a technique devel
 
 **AP-GeM** extends **GeM pooling** by introducing **attention mechanisms** to better weight and aggregate local image descriptors.
 
-![image.png](images/AP-GeM%20(Attention%20Pooling%20Generalized%20Mean%20pooling%201d271bdab3cf80f2ae99c20811ef66d8/image.png)
+![image.png](images/AP-GeM%20Attention%20Pooling%20Generalized%20Mean%20pooling%201d271bdab3cf80f2ae99c20811ef66d8/image.png)
 
 ---
 
@@ -31,7 +31,7 @@ The **AP-GeM** (Attention Pooling Generalized Mean pooling) is a technique devel
 
 4.	**Whitening**: Optionally applies PCA-whitening to the global descriptor for normalization and improved retrieval performance.
 
-![image.png](images/AP-GeM%20(Attention%20Pooling%20Generalized%20Mean%20pooling%201d271bdab3cf80f2ae99c20811ef66d8/01e2a53b-2455-49ff-bcaf-246e4e12b0bc.png)
+![image.png](images/AP-GeM%20Attention%20Pooling%20Generalized%20Mean%20pooling%201d271bdab3cf80f2ae99c20811ef66d8/01e2a53b-2455-49ff-bcaf-246e4e12b0bc.png)
 
 **attention weight generation**: This module might consist of a few convolutional layers (often 1x1 convolutions) and the final activation (like Sigmoid).
 
