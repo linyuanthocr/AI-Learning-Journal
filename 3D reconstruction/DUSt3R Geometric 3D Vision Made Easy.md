@@ -117,3 +117,6 @@ enforcing a standard camera pinhole model
 3. Network: **Vit-large for the encoder, Vit-base the decoder and a DPT head**.
 
 ###
+
+# Run on Runpod
+[runpod+dust3r](runpod+dust3r.md)
