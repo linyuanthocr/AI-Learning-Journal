@@ -1,6 +1,54 @@
 # Project Directory Structure
 
+- **./**
+  - [README.md](README.md)
+  - **3D reconstruction/**
+    - [monocular depth estimation.md](3D%20reconstruction/monocular%20depth%20estimation.md)
+    - [Gaussian Head Avatar.md](3D%20reconstruction/Gaussian%20Head%20Avatar.md)
+    - [Multiview 3D reconstruction with DL.md](3D%20reconstruction/Multiview%203D%20reconstruction%20with%20DL.md)
+    - [SimCLR.md](3D%20reconstruction/SimCLR.md)
+    - [VGGT Visual Geometry Grounded Transformer.md](3D%20reconstruction/VGGT%20Visual%20Geometry%20Grounded%20Transformer.md)
+    - [FLAME：Faces Learned with an Articulated Model.md](3D%20reconstruction/FLAME：Faces%20Learned%20with%20an%20Articulated%20Model.md)
+    - [HeadGAP.md](3D%20reconstruction/HeadGAP.md)
+    - [Humanoid robot.md](3D%20reconstruction/Humanoid%20robot.md)
+    - [DPT：Vision Transformers for Dense Prediction.md](3D%20reconstruction/DPT：Vision%20Transformers%20for%20Dense%20Prediction.md)
+    - [DUSt3R Geometric 3D Vision Made Easy.md](3D%20reconstruction/DUSt3R%20Geometric%203D%20Vision%20Made%20Easy.md)
+    - [AP-GeM Attention Pooling Generalized Mean pooling.md](3D%20reconstruction/AP-GeM%20Attention%20Pooling%20Generalized%20Mean%20pooling.md)
+    - [DINO_v2.md](3D%20reconstruction/DINO_v2.md)
+    - [3D human generation project.md](3D%20reconstruction/3D%20human%20generation%20project.md)
+    - [runpod+dust3r.md](3D%20reconstruction/runpod+dust3r.md)
+    - [NeRF Representing Scenes as Neural Radiance Fields.md](3D%20reconstruction/NeRF%20Representing%20Scenes%20as%20Neural%20Radiance%20Fields.md)
+    - **images/**
+      - **3D human generation project/**
+        - [IDEAS.md](3D%20reconstruction/images/3D%20human%20generation%20project%201a571bdab3cf80168359e46bb6a8d0b4/IDEAS%201a771bdab3cf80278398e25bf7099fd3.md)
+  - **Generative AI/**
+    - [Training lora.md](Generative%20AI/Training%20lora.md)
+    - [12 days of no-cost generative AI training Google.md](Generative%20AI/12%20days%20of%20no-cost%20generative%20AI%20training%20Google.md)
+    - [Lora training.md](Generative%20AI/Lora%20training.md)
+    - [Generative AI.md](Generative%20AI/Generative%20AI.md)
+    - [Generative AI for Beginners.md](Generative%20AI/Generative%20AI%20for%20Beginners.md)
+  - **MDE/**
+    - [runpod+depth anything v2.md](MDE/runpod+depth%20anything%20v2.md)
+    - [Depth anything v2 - Technical Report.md](MDE/Depth%20anything%20v2%20-%20Technical%20Report.md)
+    - **images/**
+  - **LLM/**
+    - [GPT2 code.pdf](LLM/GPT2%20code.pdf)
+    - [PaLM- Scaling Language Modeling with Pathways.pdf](LLM/PaLM-%20Scaling%20Language%20Modeling%20with%20Pathways.pdf)
+    - [LORA.md](LLM/LORA.md)
+    - [Generalized Language Models.md](LLM/Generalized%20Language%20Models.md)
+    - [PALM.md](LLM/PALM.md)
+    - [Self_instruct.md](LLM/Self_instruct.md)
+    - [RAG survey.md](LLM/RAG%20survey.md)
+    - [GPT序列.pdf](LLM/GPT序列.pdf)
+    - [Instruct GPT.md](LLM/Instruct%20GPT.md)
+    - [Prompt Engineering | Lil'Log.pdf](LLM/Prompt%20Engineering%20|%20Lil'Log.pdf)
+    - [LLaMA- Open and Efficient Foundation Language Models.pdf](LLM/LLaMA-%20Open%20and%20Efficient%20Foundation%20Language%20Models.pdf)
+    - **images/**
   - **CNN_DL/**
+    - [LightGlue.md](CNN_DL/LightGlue.md)
+    - [Faster R-CNN -tensorflow- _datasets.pdf](CNN_DL/Faster%20R-CNN%20-tensorflow-%20_datasets.pdf)
+    - [Focal loss with multi-label implemented in keras.pdf](CNN_DL/Focal%20loss%20with%20multi-label%20implemented%20in%20keras.pdf)
+    - [MAE -Masked autoencoders are scalable vision learners-.pdf](CNN_DL/MAE%20-Masked%20autoencoders%20are%20scalable%20vision%20learners-.pdf)
     - [ResNet.md](CNN_DL/ResNet.md)
     - [deep learning on mobiles.md](CNN_DL/deep%20learning%20on%20mobiles.md)
     - [Early stopping at minimum loss.pdf](CNN_DL/Early%20stopping%20at%20minimum%20loss.pdf)
@@ -14,17 +62,18 @@
     - [Finding Good Learning Rate and The One Cycle Policy..pdf](CNN_DL/Finding%20Good%20Learning%20Rate%20and%20The%20One%20Cycle%20Policy..pdf)
     - [RESNET.pdf](CNN_DL/RESNET.pdf)
     - [Bidirectional LSTM.md](CNN_DL/Bidirectional%20LSTM.md)
-    - [LightGlue.md](CNN_DL/LightGlue.md)
-    - [Faster R-CNN -tensorflow- _datasets.pdf](CNN_DL/Faster%20R-CNN%20-tensorflow-%20_datasets.pdf)
-    - [Focal loss with multi-label implemented in keras.pdf](CNN_DL/Focal%20loss%20with%20multi-label%20implemented%20in%20keras.pdf)
-    - [MAE -Masked autoencoders are scalable vision learners-.pdf](CNN_DL/MAE%20-Masked%20autoencoders%20are%20scalable%20vision%20learners-.pdf)
     - **images/**
   - **VO_VIO_VSLAM/**
     - [SVO mono code review.md](VO_VIO_VSLAM/SVO%20mono%20code%20review.md)
     - [2019.07.09_SLAM methods review.html](VO_VIO_VSLAM/2019.07.09_SLAM%20methods%20review.html)
+    - [LiDAR_SLAM_questions.md](VO_VIO_VSLAM/LiDAR_SLAM_questions.md)
     - [2019.08.14_MSCKF_IMU_propagation.md](VO_VIO_VSLAM/2019.08.14_MSCKF_IMU_propagation.md)
     - [2019.07.14_VINS_image_tracking.md](VO_VIO_VSLAM/2019.07.14_VINS_image_tracking.md)
+    - [Visual_SLAM_questions.md](VO_VIO_VSLAM/Visual_SLAM_questions.md)
+    - [System_design_SLAM_questions.md](VO_VIO_VSLAM/System_design_SLAM_questions.md)
     - [2019.08.07_Derivation_of_Inertial_Quaternion_Rate_Equation.md](VO_VIO_VSLAM/2019.08.07_Derivation_of_Inertial_Quaternion_Rate_Equation.md)
+    - [Coding_SLAM_questions.md](VO_VIO_VSLAM/Coding_SLAM_questions.md)
+    - [General_SLAM_questions.md](VO_VIO_VSLAM/General_SLAM_questions.md)
     - [CNN-SLAM Real-time dense monocular SLAM with learned depth prediction.md](VO_VIO_VSLAM/CNN-SLAM%20Real-time%20dense%20monocular%20SLAM%20with%20learned%20depth%20prediction.md)
     - **2019.04.08_IMU preintegration_04/**
       - [2019.04.08_IMU preintegration_04.html](VO_VIO_VSLAM/2019.04.08_IMU%20preintegration_04/2019.04.08_IMU%20preintegration_04.html)
@@ -146,35 +195,3 @@
             - [Adding Conditional Control to Text-to-Image Diffus.md](Transformers&beyond/images/Multimodal%20Foundation%20Models%20eb1d711009044c5b8f3e782c1dad1d9e/Visual%20generation%20bd9cf610d0e946e58ff02c22d93bcb93/Spatial%20Controllable%20Generation%20357b6ceca40c4a15b45416832f2e7dc7/Adding%20Conditional%20Control%20to%20Text-to-Image%20Diffus%20a2b155fd5a084973bf192419ae714678.md)
       - **Transformer Family 2 0/**
         - [Swin Transformer.md](Transformers&beyond/images/Transformer%20Family%202%200%20914e4aab3f78490bbf8769d797f92961/Swin%20Transformer%203f145133347d4864bad610512b237b2d.md)
-  - **3D Reconstruction/**
-    - [monocular depth estimation.md](3D%20reconstruction/monocular%20depth%20estimation.md)
-    - [Gaussian Head Avatar.md](3D%20reconstruction/Gaussian%20Head%20Avatar.md)
-    - [FLAME：Faces Learned with an Articulated Model.md](3D%20reconstruction/FLAME：Faces%20Learned%20with%20an%20Articulated%20Model.md)
-    - [HeadGAP.md](3D%20reconstruction/HeadGAP.md)
-    - [Humanoid robot.md](3D%20reconstruction/Humanoid%20robot.md)
-    - [3D human generation project.md](3D%20reconstruction/3D%20human%20generation%20project.md)
-    - [NeRF Representing Scenes as Neural Radiance Fields.md](3D%20reconstruction/NeRF%20Representing%20Scenes%20as%20Neural%20Radiance%20Fields.md)
-    - [Multiview 3D reconstruction with DL.md](3D%20reconstruction/Multiview%203D%20reconstruction%20with%20DL.md)
-    - **images/**
-      - **3D human generation project/**
-        - [IDEAS.md](3D%20reconstruction/images/3D%20human%20generation%20project%201a571bdab3cf80168359e46bb6a8d0b4/IDEAS%201a771bdab3cf80278398e25bf7099fd3.md)
-
-  - **LLM/**
-    - [GPT2 code.pdf](LLM/GPT2%20code.pdf)
-    - [PaLM- Scaling Language Modeling with Pathways.pdf](LLM/PaLM-%20Scaling%20Language%20Modeling%20with%20Pathways.pdf)
-    - [LORA.md](LLM/LORA.md)
-    - [Generalized Language Models.md](LLM/Generalized%20Language%20Models.md)
-    - [PALM.md](LLM/PALM.md)
-    - [Self_instruct.md](LLM/Self_instruct.md)
-    - [RAG survey.md](LLM/RAG%20survey.md)
-    - [GPT序列.pdf](LLM/GPT序列.pdf)
-    - [Instruct GPT.md](LLM/Instruct%20GPT.md)
-    - [Prompt Engineering | Lil'Log.pdf](LLM/Prompt%20Engineering%20|%20Lil'Log.pdf)
-    - [LLaMA- Open and Efficient Foundation Language Models.pdf](LLM/LLaMA-%20Open%20and%20Efficient%20Foundation%20Language%20Models.pdf)
-      
-  - **Generative AI/**
-    - [Training lora.md](Generative%20AI/Training%20lora.md)
-    - [12 days of no-cost generative AI training Google.md](Generative%20AI/12%20days%20of%20no-cost%20generative%20AI%20training%20Google.md)
-    - [Lora training.md](Generative%20AI/Lora%20training.md)
-    - [Generative AI.md](Generative%20AI/Generative%20AI.md)
-    - [Generative AI for Beginners.md](Generative%20AI/Generative%20AI%20for%20Beginners.md)
