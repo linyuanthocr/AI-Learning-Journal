@@ -19,6 +19,40 @@ Views are synthesized by querying the **5D coordinates** along the camera rays a
         ![image.png](images/NeRF%20Representing%20Scenes%20as%20Neural%20Radiance%20Fields%201b571bdab3cf804a9f26df57cb745cf0/image%202.png)
         
         Although we use a discrete set of samples to estimate the integral, stratified sampling enables us to **represent a continuous scene** representation because it results in the MLP being **evaluated at continuous positions** over the course of optimization.
+       
+        ```python
+        import torch
+        
+        def volume_render_radiance_field(sigmas, rgbs, deltas):
+            """
+            Args:
+                sigmas: [N_rays, N_samples] - predicted densities at each sample
+                rgbs:   [N_rays, N_samples, 3] - predicted colors at each sample
+                deltas: [N_rays, N_samples] - distance between adjacent samples
+            Returns:
+                final_colors: [N_rays, 3] - rendered RGB for each ray
+            """
+        
+            # 1. Compute alpha = 1 - exp(-sigma * delta)
+            alphas = 1.0 - torch.exp(-sigmas * deltas)
+        
+            # 2. Compute transmittance T_i = cumprod(1 - alpha) with shifting
+            # Add a small epsilon to prevent log(0)
+            eps = 1e-10
+            transmittance = torch.cumprod(torch.cat([
+                torch.ones_like(alphas[:, :1]),  # T_0 = 1
+                1.0 - alphas + eps
+            ], dim=-1), dim=-1)[:, :-1]  # Shift right
+        
+            # 3. Weights = T_i * alpha_i
+            weights = transmittance * alphas  # [N_rays, N_samples]
+        
+            # 4. Final RGB = weighted sum of colors
+            final_colors = torch.sum(weights.unsqueeze(-1) * rgbs, dim=1)  # [N_rays, 3]
+        
+            return final_colors
+        
+        ```
         
         ![image.png](images/NeRF%20Representing%20Scenes%20as%20Neural%20Radiance%20Fields%201b571bdab3cf804a9f26df57cb745cf0/image%203.png)
         
