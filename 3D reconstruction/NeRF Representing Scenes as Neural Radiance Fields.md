@@ -27,12 +27,13 @@ Views are synthesized by querying the **5D coordinates** along the camera rays a
         - **mapping the inputs to a higher dimensional** space using high frequency functions before passing them to the network enables better fitting of data that contains high frequency variation
         
         ![image.png](images/NeRF%20Representing%20Scenes%20as%20Neural%20Radiance%20Fields%201b571bdab3cf804a9f26df57cb745cf0/image%204.png)
+       <img width="881" alt="image" src="https://github.com/user-attachments/assets/89b9568a-1455-4267-98cf-6dfb8a84f120" />
         
-    2. Hierarchical volume sampling
+    3. Hierarchical volume sampling
         
         ![image.png](images/NeRF%20Representing%20Scenes%20as%20Neural%20Radiance%20Fields%201b571bdab3cf804a9f26df57cb745cf0/image%205.png)
         
-    3. Details
+    4. Details
         - Input: RGB, intrinsic parameters, camera poses, scene bound (synthetic data and real data (COLMAP SFM estimation))
         - each iteration: random camera rays+hierachical rendering
             
