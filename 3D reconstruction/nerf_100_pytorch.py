@@ -62,7 +62,7 @@ def render_test(fine_model, coarse_model, dataset, hn=0, hf=0.5, chunk_size=10, 
         rd_chunk = ray_directions[i * W * chunk_size: (i + 1) * W * chunk_size].to(fine_model.block1[0].weight.device)
         _, rgb = render_rays_hierarchical(coarse_model, fine_model, ro_chunk, rd_chunk, hn, hf)
         data.append(rgb)
-    img = torch.cat(data).data.cpu().numpy().reshape(H, W, 3)
+    img = torch.cat(data).detach().cpu().numpy().reshape(H, W, 3)
     plt.imshow(img)
     plt.axis('off')
     plt.savefig(f'novel_views/img_{img_index}.png', bbox_inches='tight')
