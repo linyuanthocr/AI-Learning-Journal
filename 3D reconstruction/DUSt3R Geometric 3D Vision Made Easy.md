@@ -114,6 +114,53 @@ this method took mere seconds on standard GPU
 
 ![image.png](images/DUSt3R%20Geometric%203D%20Vision%20Made%20Easy%201ba71bdab3cf80a08e7afbedcb4a1605/image%2016.png)
 
+在 Dense 匹配优化（如 Dust3r 里的 PointCloudOptimizer）和经典的 **稀疏 Bundle Adjustment (BA)** 之间，有明显的优缺点对比：
+
+---
+
+## **✅ 优点：Dense 优化 + Adam（如 Dust3r 的做法）**
+
+| **优点** | **说明** |
+| --- | --- |
+| **支持 dense 匹配** | 不再依赖稀疏 keypoints（如 SIFT/ORB），对低纹理区域更友好 |
+| **可端到端训练** | 可嵌入深度学习网络，优化目标、深度、位姿全部可学习 |
+| **更容错** | 由于使用 dense mask + confidence 估计，可以忽略 low-quality 区域 |
+| **实现简单** | 用 PyTorch 中的 Adam 优化器即可，无需推导复杂的 Jacobians |
+| **可联合优化内参** | 比如 focal、pp 作为 nn.Parameter，直接优化 |
+
+---
+
+## **❌ 缺点：Dense 优化 + Adam**
+
+| **缺点** | **说明** |
+| --- | --- |
+| **收敛速度慢** | 相比 Levenberg-Marquardt 等二阶方法，收敛更慢 |
+| **易陷入局部最优** | 若初始位姿差太多，可能收敛失败，特别是无监督场景 |
+| **不能处理大规模场景** | 大规模 SLAM 或 SfM 通常千万级稀疏点、上千帧，Adam 的 dense 模型代价太高 |
+| **误差解释性差** | BA 输出协方差信息、残差可解释性更好；而 Adam 优化像“黑箱” |
+| **不能利用稀疏观测图结构** | BA 可以高效地利用稀疏 Jacobian，而 dense 优化是 full-matrix 方式，内存和速度不划算 |
+
+---
+
+## **🥊 与传统 BA 对比总结**
+
+| **对比项** | **Dense 优化 + Adam** | **Sparse BA + Ceres** |
+| --- | --- | --- |
+| 目标函数 | dense 3D align / reprojection | sparse reprojection |
+| 可优化参数 | pose, depth, focal, pp 等 | pose, sparse points, intrinsics |
+| 优化方法 | 一阶（Adam） | 二阶（LM / Gauss-Newton） |
+| 初始化依赖 | 高（需网络预测 init） | 中（RANSAC + PnP init） |
+| 可扩展性 | 小规模（几百帧内） | 超大规模可行 |
+| 实用场景 | 网络辅助 dense 重建、结构引导优化 | SfM/SLAM/AR 等传统三维重建 |
+
+---
+
+## **🧠 最佳实践建议：**
+
+- ✅ **小规模场景 / 联合训练场景**（如 Dust3r、NeRF）：可以用 Adam + dense optimization，省事灵活
+- ✅ **传统大规模三维重建（如 COLMAP）**：仍然推荐用 Sparse BA + LM，成熟稳定
+- 🤝 **Hybrid 方法**：也有研究用 Adam 进行 coarse pose refine，之后再 BA 微调
+
 # Experiments
 
 ### Find image pairs
