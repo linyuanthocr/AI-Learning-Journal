@@ -6,7 +6,7 @@ https://huggingface.co/docs/transformers/model_doc/dpt
 
 **Dense prediction transformers**， an architecture that leverages vision transformers in place of **convolutional networks as a backbone** for dense prediction tasks. We **assemble tokens** from **various stages** of the vision transformer into image-like representations at various resolutions and progressively combine them into **full-resolution predictions** using a **convolutional decoder**. 
 
-![image.png](images/DPT%20AVision%20Transformers%20for%20Dense%20Prediction%201ba71bdab3cf80f88a58f9790775a2fc/image.png)
+![image.png](images/DPT%20Vision%20Transformers%20for%20Dense%20Prediction%201ba71bdab3cf80f88a58f9790775a2fc/image.png)
 
 ## Transformer encoder
 
