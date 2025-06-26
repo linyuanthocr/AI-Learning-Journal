@@ -416,6 +416,77 @@
             margin-top: 4px;
         }
 
+        .recent-updates {
+            margin: 32px 0;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .recent-files-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .recent-file-item {
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .recent-file-item:hover {
+            background: var(--accent-color);
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .recent-file-content {
+            flex: 1;
+        }
+
+        .recent-file-title {
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 4px;
+            text-align: left;
+        }
+
+        .recent-file-meta {
+            font-size: 14px;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .recent-file-item:hover .recent-file-meta {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .recent-file-type {
+            background: var(--primary-color);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
         .quick-access {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -929,6 +1000,12 @@
                 </div>
             </div>
             <div class="header-right">
+                <button class="theme-toggle" onclick="showTokenStatus()" title="Check GitHub token status and rate limits">
+                    <span id="tokenIcon">📊</span>
+                </button>
+                <button class="theme-toggle" onclick="updateGitHubToken()" title="Set GitHub Token (optional - increases API rate limit from 60 to 5,000/hour)">
+                    <span>🔑</span>
+                </button>
                 <button class="theme-toggle" onclick="refreshRepository()" title="Refresh repository data">
                     <span id="refreshIcon">🔄</span>
                 </button>
@@ -990,6 +1067,13 @@
                         </div>
                     </div>
 
+                    <div class="recent-updates">
+                        <h2 class="section-title">📝 Recent Updates</h2>
+                        <div class="recent-files-list" id="recentUpdatesList">
+                            <!-- Recent files will be populated here -->
+                        </div>
+                    </div>
+
                     <div class="quick-access">
                         <div class="quick-access-item" onclick="expandFolder('3D reconstruction')">
                             <div class="quick-access-icon">🏗️</div>
@@ -1006,11 +1090,6 @@
                             <div class="quick-access-title">Generative Models</div>
                             <div class="quick-access-desc">Diffusion models, GANs, and image generation</div>
                         </div>
-                        <div class="quick-access-item" onclick="expandFolder('Transformers&beyond')">
-                            <div class="quick-access-icon">🔀</div>
-                            <div class="quick-access-title">Transformers & Beyond</div>
-                            <div class="quick-access-desc">Attention mechanisms and advanced architectures</div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -1024,16 +1103,43 @@
         const GITHUB_API_BASE = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}`;
         const GITHUB_RAW_BASE = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main`;
         
+        // GitHub API Token (optional - increases rate limit from 60 to 5000 requests/hour)
+        // To get a token: GitHub Settings > Developer settings > Personal access tokens > Generate new token
+        // Only needs 'public_repo' permission for public repositories
+        const GITHUB_TOKEN = localStorage.getItem('github-token') || null;
+        
+        // Helper function to create authenticated GitHub API requests
+        function createGitHubRequest(url, options = {}) {
+            const headers = {
+                'Accept': 'application/vnd.github.v3+json',
+                ...options.headers
+            };
+            
+            if (GITHUB_TOKEN) {
+                headers['Authorization'] = `token ${GITHUB_TOKEN}`;
+                console.log('🔑 Using authenticated GitHub API request');
+            } else {
+                console.log('⚠️ Using unauthenticated GitHub API (limited to 60 requests/hour)');
+            }
+            
+            return fetch(url, {
+                ...options,
+                headers
+            });
+        }
+        
         // Helper function to try fallback image URLs
         function tryFallbackImage(imgElement, fallbackUrls, altText) {
             if (fallbackUrls.length === 0) {
                 // No more fallbacks, show error message
+                console.log(`❌ All fallback URLs failed for: ${altText}`);
                 imgElement.style.display = 'none';
                 imgElement.nextElementSibling.style.display = 'block';
                 return;
             }
             
             const nextUrl = fallbackUrls.shift();
+            console.log(`🔄 Trying fallback URL for ${altText}:`, nextUrl);
             imgElement.onerror = () => tryFallbackImage(imgElement, fallbackUrls, altText);
             imgElement.src = nextUrl;
         }
@@ -1066,27 +1172,27 @@
                     console.warn('PDF.js library not loaded - PDF viewing will not work');
                 }
                 
-                showLoading('Loading repository data...');
+                // Load fallback data immediately to show content quickly
+                console.log('Loading fallback data immediately for faster startup');
+                await loadFallbackStructure();
+                console.log('📁 Repository data after fallback load:', Object.keys(repositoryData));
+                console.log('📄 Total files in allFiles:', allFiles.length);
+                console.log('🕒 Recent files loaded:', recentFiles.length);
+                renderSidebar();
+                updateStats();
+                showWelcome();
+                showNotification('✨ AI Learning Journal loaded successfully!', 'success');
                 
-                // Check if we should use cached data
-                const cachedData = localStorage.getItem('ai-journal-cached-data');
-                const now = Date.now();
-                const shouldRefresh = !lastCacheUpdate || 
-                                    (now - parseInt(lastCacheUpdate)) > CACHE_DURATION || 
-                                    !cachedData;
-                
-                if (cachedData && !shouldRefresh) {
-                    console.log('Using cached repository data');
-                    loadFromCache();
-                    renderSidebar();
-                    updateStats();
-                    showWelcome();
-                    showNotification('📁 Loaded from cache. Click refresh to update.', 'info');
-                } else {
+                // Try to load fresh data using improved API methods
+                try {
+                    console.log('🔄 Attempting to load repository data from GitHub API...');
                     await loadRepositoryStructure();
                     renderSidebar();
                     updateStats();
-                    showWelcome();
+                    showNotification('🎉 Repository data loaded from GitHub API!', 'success');
+                } catch (bgError) {
+                    console.log('⚠️ GitHub API failed, continuing with fallback data:', bgError);
+                    showNotification('ℹ️ Using cached data - GitHub API limit reached', 'info');
                 }
             } catch (error) {
                 console.error('Failed to initialize app:', error);
@@ -1155,49 +1261,105 @@
             }
         }
 
-        // Load repository structure from GitHub API
+        // Load repository structure from GitHub API using Git Trees API (more efficient)
         async function loadRepositoryStructure() {
             try {
-                console.log('Loading repository structure...');
-                console.log('GitHub API URL:', `${GITHUB_API_BASE}/contents`);
+                console.log('🌳 Loading repository structure using Git Trees API...');
                 
-                const response = await fetch(`${GITHUB_API_BASE}/contents`);
-                console.log('API Response status:', response.status, response.statusText);
+                // First, get the main branch commit SHA
+                const branchResponse = await createGitHubRequest(`${GITHUB_API_BASE}/branches/main`);
+                if (!branchResponse.ok) {
+                    throw new Error(`Failed to get branch info: ${branchResponse.status}`);
+                }
+                const branchData = await branchResponse.json();
+                const commitSha = branchData.commit.sha;
+                console.log('📍 Main branch commit SHA:', commitSha);
                 
-                if (!response.ok) {
-                    console.error('GitHub API error - response not ok:', response.status, response.statusText);
-                    throw new Error(`GitHub API error: ${response.status} ${response.statusText}`);
+                // Get the complete file tree (recursive)
+                const treeResponse = await createGitHubRequest(`${GITHUB_API_BASE}/git/trees/${commitSha}?recursive=1`);
+                console.log('🌳 Tree API Response status:', treeResponse.status, treeResponse.statusText);
+                
+                if (!treeResponse.ok) {
+                    console.error('🚨 Git Trees API error:', treeResponse.status, treeResponse.statusText);
+                    throw new Error(`Git Trees API error: ${treeResponse.status} ${treeResponse.statusText}`);
                 }
                 
-                const contents = await response.json();
-                console.log('Repository contents loaded:', contents.length, 'items');
-                console.log('Contents:', contents);
+                const treeData = await treeResponse.json();
+                console.log('📁 Complete file tree loaded:', treeData.tree.length, 'items');
                 
-                // Filter directories and load their contents
-                const directories = contents.filter(item => item.type === 'dir' && !item.name.startsWith('.'));
-                console.log('Found directories:', directories.map(d => d.name));
+                // Process all files from the tree
+                const tempRepositoryData = {};
+                const tempAllFiles = [];
                 
-                if (directories.length === 0) {
-                    console.warn('No directories found, using fallback structure');
-                    await loadFallbackStructure();
-                    return;
+                // Filter for markdown and PDF files, group by directory
+                const filesByDirectory = {};
+                
+                treeData.tree.forEach(item => {
+                    if (item.type === 'blob' && (item.path.endsWith('.md') || item.path.endsWith('.pdf'))) {
+                        const pathParts = item.path.split('/');
+                        if (pathParts.length >= 2) { // At least one directory level
+                            const directory = pathParts[0];
+                            const filename = pathParts[pathParts.length - 1];
+                            
+                            if (!filesByDirectory[directory]) {
+                                filesByDirectory[directory] = [];
+                            }
+                            
+                            filesByDirectory[directory].push({
+                                name: filename,
+                                displayName: formatFileDisplayName(filename),
+                                path: item.path,
+                                downloadUrl: `${GITHUB_RAW_BASE}/${encodeURIComponent(item.path).replace(/%2F/g, '/')}`,
+                                size: item.size || 0,
+                                type: filename.endsWith('.md') ? 'markdown' : 'pdf',
+                                sha: item.sha
+                            });
+                        }
+                    }
+                });
+                
+                console.log('📂 Directories found:', Object.keys(filesByDirectory));
+                console.log('📄 Files per directory:', Object.entries(filesByDirectory).map(([dir, files]) => `${dir}: ${files.length}`));
+                
+                // Build repository data structure
+                Object.entries(filesByDirectory).forEach(([dirName, files]) => {
+                    tempRepositoryData[dirName] = {
+                        name: dirName,
+                        displayName: formatDisplayName(dirName),
+                        files: files
+                    };
+                    
+                    // Add to allFiles array
+                    files.forEach(file => {
+                        tempAllFiles.push({
+                            ...file,
+                            category: dirName,
+                            categoryDisplayName: formatDisplayName(dirName)
+                        });
+                    });
+                });
+                
+                // Only update global data if we successfully loaded new data
+                if (Object.keys(tempRepositoryData).length > 0) {
+                    repositoryData = tempRepositoryData;
+                    allFiles = tempAllFiles;
+                    console.log('🎉 Repository structure loaded successfully using Git Trees API');
+                    console.log('📊 Final stats:', {
+                        categories: Object.keys(repositoryData).length,
+                        totalFiles: allFiles.length,
+                        filesByCategory: Object.entries(repositoryData).reduce((acc, [key, data]) => {
+                            acc[key] = data.files.length;
+                            return acc;
+                        }, {})
+                    });
+                    saveToCache();
+                } else {
+                    console.warn('⚠️ No new data loaded, keeping existing data');
                 }
-                
-                for (const dir of directories) {
-                    console.log(`Loading directory: ${dir.name}`);
-                    await loadDirectoryContents(dir.name);
-                }
-                
-                console.log('Repository structure loaded successfully');
-                console.log('Final repositoryData:', repositoryData);
-                console.log('Total files loaded:', allFiles.length);
-                saveToCache();
             } catch (error) {
                 console.error('Failed to load repository structure:', error);
-                
-                // Fallback: Use hardcoded structure if API fails
-                console.log('Using fallback structure due to error');
-                await loadFallbackStructure();
+                console.log('Keeping existing data due to error');
+                throw error; // Re-throw to let caller handle
             }
         }
 
@@ -1214,17 +1376,20 @@
                         { name: '3D Gaussian Splatting for Real-Time Radiance Field.md', displayName: '3D Gaussian Splatting for Real-Time Radiance Field', path: '3D reconstruction/3D Gaussian Splatting for Real-Time Radiance Field.md', type: 'markdown' },
                         { name: 'NeRF Representing Scenes as Neural Radiance Fields.md', displayName: 'NeRF Representing Scenes as Neural Radiance Fields', path: '3D reconstruction/NeRF Representing Scenes as Neural Radiance Fields.md', type: 'markdown' },
                         { name: 'DUSt3R Geometric 3D Vision Made Easy.md', displayName: 'DUSt3R Geometric 3D Vision Made Easy', path: '3D reconstruction/DUSt3R Geometric 3D Vision Made Easy.md', type: 'markdown' },
-                        { name: 'Instant Neural Graphics Primitives_Instant-NGP.md', displayName: 'Instant Neural Graphics Primitives Instant NGP', path: '3D reconstruction/Instant Neural Graphics Primitives_Instant-NGP.md', type: 'markdown' }
+                        { name: 'Instant Neural Graphics Primitives_Instant-NGP.md', displayName: 'Instant Neural Graphics Primitives Instant NGP', path: '3D reconstruction/Instant Neural Graphics Primitives_Instant-NGP.md', type: 'markdown' },
+                        { name: 'Segment Anything.md', displayName: 'Segment Anything', path: '3D reconstruction/Segment Anything.md', type: 'markdown' }
                     ]
                 },
                 'CNN_DL': {
                     name: 'CNN_DL',
                     displayName: 'CNN & Deep Learning',
                     files: [
-                        { name: 'Batch Normalization.md', displayName: 'Batch Normalization', path: 'CNN_DL/Batch Normalization.md', type: 'markdown' },
-                        { name: 'ResNet Architecture.md', displayName: 'ResNet Architecture', path: 'CNN_DL/ResNet Architecture.md', type: 'markdown' },
-                        { name: 'UNet.md', displayName: 'UNet', path: 'CNN_DL/UNet.md', type: 'markdown' },
-                        { name: 'Knowledge Distillation.md', displayName: 'Knowledge Distillation', path: 'CNN_DL/Knowledge Distillation.md', type: 'markdown' }
+                        { name: 'Bidirectional LSTM.md', displayName: 'Bidirectional LSTM', path: 'CNN_DL/Bidirectional LSTM.md', type: 'markdown' },
+                        { name: 'CLIP variances.md', displayName: 'CLIP Variances', path: 'CNN_DL/CLIP variances.md', type: 'markdown' },
+                        { name: 'Contrastive learning.md', displayName: 'Contrastive Learning', path: 'CNN_DL/Contrastive learning.md', type: 'markdown' },
+                        { name: 'ResNet.md', displayName: 'ResNet', path: 'CNN_DL/ResNet.md', type: 'markdown' },
+                        { name: 'deep learning on mobiles.md', displayName: 'Deep Learning on Mobiles', path: 'CNN_DL/deep learning on mobiles.md', type: 'markdown' },
+                        { name: 'LightGlue.md', displayName: 'LightGlue', path: 'CNN_DL/LightGlue.md', type: 'markdown' }
                     ]
                 },
                 'Diffusion_models_GAN': {
@@ -1262,11 +1427,45 @@
                     name: 'Transformers&beyond',
                     displayName: 'Transformers & Beyond',
                     files: [
+                        { name: 'Distillation.md', displayName: 'Distillation', path: 'Transformers&beyond/Distillation.md', type: 'markdown' },
                         { name: 'Flash Attention.md', displayName: 'Flash Attention', path: 'Transformers&beyond/Flash Attention.md', type: 'markdown' },
-                        { name: 'Transformer Family 2 0.md', displayName: 'Transformer Family 2.0', path: 'Transformers&beyond/Transformer Family 2 0.md', type: 'markdown' },
-                        { name: 'ViT.md', displayName: 'Vision Transformer', path: 'Transformers&beyond/ViT.md', type: 'markdown' },
+                        { name: 'IMAGEBIND.md', displayName: 'ImageBind', path: 'Transformers&beyond/IMAGEBIND.md', type: 'markdown' },
+                        { name: 'Knowledge_Dis.md', displayName: 'Knowledge Distillation', path: 'Transformers&beyond/Knowledge_Dis.md', type: 'markdown' },
+                        { name: 'LoFTR：Detector-Free Local Feature Matching.md', displayName: 'LoFTR: Detector-Free Local Feature Matching', path: 'Transformers&beyond/LoFTR：Detector-Free Local Feature Matching.md', type: 'markdown' },
+                        { name: 'MOCO_ Momentum Contrast for Unsupervised Visual Re.md', displayName: 'MOCO: Momentum Contrast for Unsupervised Visual Representation Learning', path: 'Transformers&beyond/MOCO_ Momentum Contrast for Unsupervised Visual Re.md', type: 'markdown' },
                         { name: 'Mamba.md', displayName: 'Mamba', path: 'Transformers&beyond/Mamba.md', type: 'markdown' },
-                        { name: 'IMAGEBIND.md', displayName: 'ImageBind', path: 'Transformers&beyond/IMAGEBIND.md', type: 'markdown' }
+                        { name: 'Multimodal Foundation Models.md', displayName: 'Multimodal Foundation Models', path: 'Transformers&beyond/Multimodal Foundation Models.md', type: 'markdown' },
+                        { name: 'S4 model Long Sequences with Structured State Spac.md', displayName: 'S4 Model: Long Sequences with Structured State Spaces', path: 'Transformers&beyond/S4 model Long Sequences with Structured State Spac.md', type: 'markdown' },
+                        { name: 'Transformer Family 2 0.md', displayName: 'Transformer Family 2.0', path: 'Transformers&beyond/Transformer Family 2 0.md', type: 'markdown' },
+                        { name: 'ViT.md', displayName: 'Vision Transformer', path: 'Transformers&beyond/ViT.md', type: 'markdown' }
+                    ]
+                },
+                'MDE': {
+                    name: 'MDE',
+                    displayName: 'Monocular Depth Estimation',
+                    files: [
+                        { name: 'MDE_basics.md', displayName: 'Monocular Depth Estimation Basics', path: 'MDE/MDE_basics.md', type: 'markdown' }
+                    ]
+                },
+                'Matching&tracking': {
+                    name: 'Matching&tracking',
+                    displayName: 'Matching & Tracking',
+                    files: [
+                        { name: 'tracking_basics.md', displayName: 'Tracking Basics', path: 'Matching&tracking/tracking_basics.md', type: 'markdown' }
+                    ]
+                },
+                'Tools_Usage': {
+                    name: 'Tools_Usage',
+                    displayName: 'Tools & Usage',
+                    files: [
+                        { name: 'git_usage.md', displayName: 'Git Usage', path: 'Tools_Usage/git_usage.md', type: 'markdown' }
+                    ]
+                },
+                'VO_VIO_VSLAM': {
+                    name: 'VO_VIO_VSLAM',
+                    displayName: 'Visual Odometry & SLAM',
+                    files: [
+                        { name: 'SLAM_basics.md', displayName: 'SLAM Basics', path: 'VO_VIO_VSLAM/SLAM_basics.md', type: 'markdown' }
                     ]
                 }
             };
@@ -1275,25 +1474,79 @@
             console.log('Processing fallback data with', Object.keys(fallbackData).length, 'categories');
             Object.entries(fallbackData).forEach(([key, data]) => {
                 console.log(`Processing category: ${key} with ${data.files.length} files`);
-                repositoryData[key] = data;
+                
+                // Add downloadUrl to each file in the data
+                const filesWithDownloadUrl = data.files.map(file => ({
+                    ...file,
+                    downloadUrl: `${GITHUB_RAW_BASE}/${encodeURIComponent(file.path).replace(/%2F/g, '/')}`
+                }));
+                
+                // Store the updated data
+                repositoryData[key] = {
+                    ...data,
+                    files: filesWithDownloadUrl
+                };
                 
                 // Add files to search index
-                data.files.forEach(file => {
-                    allFiles.push({
-                        ...file,
-                        category: key,
-                        categoryDisplayName: data.displayName,
-                        downloadUrl: `${GITHUB_RAW_BASE}/${file.path.replace(/ /g, '%20')}`
-                    });
+                filesWithDownloadUrl.forEach(file => {
+                    if (file && file.path) {
+                        allFiles.push({
+                            ...file,
+                            category: key,
+                            categoryDisplayName: data.displayName
+                        });
+                    } else {
+                        console.warn('Invalid file object in fallback data:', file);
+                    }
                 });
             });
             
             console.log('Fallback data loaded - repositoryData:', Object.keys(repositoryData));
             console.log('Total files in allFiles:', allFiles.length);
+            
+            // Add some default recent files for immediate display using actual existing files
+            if (recentFiles.length === 0) {
+                recentFiles = [
+                    {
+                        name: 'DUSt3R Geometric 3D Vision Made Easy.md',
+                        path: '3D reconstruction/DUSt3R Geometric 3D Vision Made Easy.md',
+                        displayName: 'DUSt3R: Geometric 3D Vision Made Easy',
+                        summary: 'Revolutionary 3D reconstruction approach using neural radiance fields',
+                        category: '3D reconstruction',
+                        categoryDisplayName: '3D Reconstruction',
+                        type: 'markdown',
+                        downloadUrl: `${GITHUB_RAW_BASE}/3D reconstruction/DUSt3R Geometric 3D Vision Made Easy.md`,
+                        timestamp: Date.now() - 86400000 // 1 day ago
+                    },
+                    {
+                        name: 'Flash Attention.md',
+                        path: 'Transformers&beyond/Flash Attention.md',
+                        displayName: 'Flash Attention: Memory-Efficient Attention',
+                        summary: 'Optimized attention mechanism for faster transformer training',
+                        category: 'Transformers&beyond',
+                        categoryDisplayName: 'Transformers & Beyond',
+                        type: 'markdown',
+                        downloadUrl: `${GITHUB_RAW_BASE}/${encodeURIComponent('Transformers&beyond/Flash Attention.md').replace(/%2F/g, '/')}`,
+                        timestamp: Date.now() - 172800000 // 2 days ago
+                    },
+                    {
+                        name: 'Mamba.md',
+                        path: 'Transformers&beyond/Mamba.md',
+                        displayName: 'Mamba: Linear-Time Sequence Modeling',
+                        summary: 'State-space models for efficient long sequence processing',
+                        category: 'Transformers&beyond',
+                        categoryDisplayName: 'Transformers & Beyond',
+                        type: 'markdown',
+                        downloadUrl: `${GITHUB_RAW_BASE}/${encodeURIComponent('Transformers&beyond/Mamba.md').replace(/%2F/g, '/')}`,
+                        timestamp: Date.now() - 259200000 // 3 days ago
+                    }
+                ];
+                localStorage.setItem('ai-journal-recent', JSON.stringify(recentFiles));
+            }
         }
 
         // Load contents of a specific directory
-        async function loadDirectoryContents(dirName) {
+        async function loadDirectoryContents(dirName, targetRepositoryData = repositoryData, targetAllFiles = allFiles) {
             try {
                 const url = `${GITHUB_API_BASE}/contents/${encodeURIComponent(dirName)}`;
                 console.log(`Loading directory contents for: ${dirName}`);
@@ -1316,6 +1569,11 @@
                 );
                 console.log(`Filtered files in ${dirName}:`, files.length, 'items');
                 console.log(`File names:`, files.map(f => f.name));
+                // Debug: Log what fields are available
+                if (files.length > 0) {
+                    console.log('Sample file object keys:', Object.keys(files[0]));
+                    console.log('Sample file data:', files[0]);
+                }
                 
                 // Process files and handle duplicate display names
                 const processedFiles = [];
@@ -1338,11 +1596,12 @@
                         path: file.path,
                         downloadUrl: file.download_url,
                         size: file.size,
-                        type: file.name.endsWith('.md') ? 'markdown' : 'pdf'
+                        type: file.name.endsWith('.md') ? 'markdown' : 'pdf',
+                        lastModified: file.updated_at || file.last_modified || new Date().toISOString()
                     });
                 });
                 
-                repositoryData[dirName] = {
+                targetRepositoryData[dirName] = {
                     name: dirName,
                     displayName: formatDisplayName(dirName),
                     files: processedFiles
@@ -1350,7 +1609,7 @@
                 
                 // Add files to search index
                 processedFiles.forEach(file => {
-                    allFiles.push({
+                    targetAllFiles.push({
                         name: file.name,
                         displayName: file.displayName,
                         path: file.path,
@@ -1358,7 +1617,8 @@
                         categoryDisplayName: formatDisplayName(dirName),
                         downloadUrl: file.downloadUrl,
                         size: file.size,
-                        type: file.type
+                        type: file.type,
+                        lastModified: file.lastModified
                     });
                 });
             } catch (error) {
@@ -1368,6 +1628,10 @@
 
         // Format display names
         function formatDisplayName(name) {
+            if (!name || typeof name !== 'string') {
+                console.warn('formatDisplayName called with invalid name:', name);
+                return '';
+            }
             return name
                 .replace(/[_&]/g, ' ')
                 .split(' ')
@@ -1376,6 +1640,10 @@
         }
 
         function formatFileDisplayName(filename) {
+            if (!filename || typeof filename !== 'string') {
+                console.warn('formatFileDisplayName called with invalid filename:', filename);
+                return '';
+            }
             let nameWithoutExt = filename.replace(/\.(md|pdf)$/, '');
             
             // Only remove hash at the very end - be more specific
@@ -1414,32 +1682,40 @@
 
         // Render sidebar
         function renderSidebar() {
-            console.log('renderSidebar called');
-            console.log('repositoryData keys:', Object.keys(repositoryData));
-            console.log('repositoryData:', repositoryData);
+            console.log('🎨 renderSidebar called');
+            console.log('📁 repositoryData keys:', Object.keys(repositoryData));
+            console.log('📊 repositoryData structure:', repositoryData);
             
             const folderList = document.getElementById('folderList');
             if (!folderList) {
-                console.error('folderList element not found!');
+                console.error('❌ folderList element not found!');
                 return;
             }
             
+            console.log('✅ folderList element found, clearing content');
             folderList.innerHTML = '';
             
             if (Object.keys(repositoryData).length === 0) {
-                console.warn('No repository data to render');
+                console.warn('⚠️ No repository data to render');
                 folderList.innerHTML = '<p style="color: var(--text-secondary); padding: 16px;">No categories found. Please refresh to reload data.</p>';
                 return;
             }
             
+            console.log(`🗂️ Processing ${Object.keys(repositoryData).length} categories`);
             Object.entries(repositoryData).sort().forEach(([folderName, folderData]) => {
-                console.log(`Rendering folder: ${folderName} with ${folderData.files.length} files`);
+                console.log(`📂 Rendering folder: ${folderName} with ${folderData.files ? folderData.files.length : 0} files`);
+                if (!folderData.files || folderData.files.length === 0) {
+                    console.warn(`⚠️ Folder ${folderName} has no files:`, folderData);
+                }
                 const folderElement = createFolderElement(folderData);
                 folderList.appendChild(folderElement);
             });
             
+            console.log('🕒 Rendering recent files...');
             renderRecentFiles();
+            console.log('⭐ Rendering favorite files...');
             renderFavoriteFiles();
+            console.log('✅ Sidebar rendering complete');
         }
 
         // Create folder element
@@ -1516,11 +1792,100 @@
             }
         }
 
+        // Sanitize strings for safe DOM usage
+        function sanitizeForDOM(str) {
+            if (!str) return '';
+            return str
+                .replace(/：([^\s])/g, '： $1')  // Add space after Chinese colons if missing
+                .replace(/:([^\s])/g, ': $1')   // Add space after regular colons if missing
+                .replace(/'/g, '&#39;')         // Single quotes to HTML entity
+                .replace(/"/g, '&quot;')        // Double quotes to HTML entity
+                .replace(/</g, '&lt;')      // Less than to HTML entity
+                .replace(/>/g, '&gt;')      // Greater than to HTML entity
+                .replace(/&/g, '&amp;')     // Ampersand to HTML entity (do this last)
+                .trim();
+        }
+
+        // Sanitize strings for safe JavaScript usage
+        function sanitizeForJS(str) {
+            if (!str) return '';
+            return str
+                .replace(/：([^\s])/g, '： $1')  // Add space after Chinese colons if missing
+                .replace(/:([^\s])/g, ': $1')   // Add space after regular colons if missing
+                .replace(/'/g, "\\'")           // Escape single quotes for JS
+                .replace(/"/g, '\\"')           // Escape double quotes for JS
+                .replace(/\\/g, '\\\\')     // Escape backslashes
+                .trim();
+        }
+
+        // Ensure DOM elements are ready
+        function ensureContentElementsReady() {
+            const elements = ['contentHeader', 'breadcrumb', 'contentTitle', 'contentMeta', 'contentBody'];
+            const missing = elements.filter(id => !document.getElementById(id));
+            
+            if (missing.length > 0) {
+                console.warn('⚠️ Content elements not ready:', missing);
+                return false;
+            }
+            return true;
+        }
+
         // Load and display file
         async function loadFile(file, categoryName) {
             try {
+                console.log('🚀 loadFile called with:', { file, categoryName });
+                
+                // Special debug for FLAME files
+                if (file && file.name && file.name.toLowerCase().includes('flame')) {
+                    console.log('🔥 FLAME file loading details:', {
+                        name: file.name,
+                        path: file.path,
+                        downloadUrl: file.downloadUrl,
+                        displayName: file.displayName
+                    });
+                }
+                
+                // Ensure DOM is ready
+                if (!ensureContentElementsReady()) {
+                    console.log('⏳ Waiting for DOM elements to be ready...');
+                    // Wait a brief moment for DOM to be ready, then try again
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                    if (!ensureContentElementsReady()) {
+                        throw new Error('Content elements not available after waiting');
+                    }
+                }
+                
+                // Validate file object
+                if (!file) {
+                    throw new Error('File object is null or undefined');
+                }
+                
+                console.log('🔍 File object details:', {
+                    hasPath: !!file.path,
+                    hasDownloadUrl: !!file.downloadUrl,
+                    hasName: !!file.name,
+                    hasDisplayName: !!file.displayName,
+                    path: file.path,
+                    downloadUrl: file.downloadUrl,
+                    name: file.name,
+                    displayName: file.displayName,
+                    type: file.type,
+                    allKeys: Object.keys(file)
+                });
+                
+                if (!file.path) {
+                    console.error('❌ File object missing path property:', file);
+                    throw new Error('File object is missing required path property');
+                }
+                
+                if (!file.downloadUrl) {
+                    console.warn('⚠️ File missing downloadUrl, will construct from path');
+                    file.downloadUrl = `${GITHUB_RAW_BASE}/${encodeURIComponent(file.path).replace(/%2F/g, '/')}`;
+                    console.log('✅ Constructed downloadUrl:', file.downloadUrl);
+                }
+                
                 showLoading('Loading file...');
-                console.log('Loading file:', file.path, 'URL:', file.downloadUrl);
+                console.log('📄 Loading file:', file.path, 'URL:', file.downloadUrl);
                 
                 // Update UI first
                 setActiveFile(file.path);
@@ -1550,10 +1915,17 @@
                     console.log('Response status:', response.status, response.statusText);
                     
                     if (!response.ok) {
+                        console.error('❌ Failed to fetch file:', {
+                            url: fileUrl,
+                            status: response.status,
+                            statusText: response.statusText,
+                            file: file
+                        });
+                        
                         // Try alternative URL construction
                         if (fileUrl.includes('%20')) {
                             const altUrl = fileUrl.replace(/%20/g, ' ');
-                            console.log('Trying alternative URL without encoding:', altUrl);
+                            console.log('🔄 Trying alternative URL without encoding:', altUrl);
                             const altResponse = await fetch(altUrl, {
                                 method: 'GET',
                                 headers: {
@@ -1563,12 +1935,31 @@
                                 mode: 'cors'
                             });
                             if (altResponse.ok) {
+                                console.log('✅ Alternative URL worked!');
                                 const content = await altResponse.text();
                                 showFileContent(file, categoryName, content);
                                 return;
+                            } else {
+                                console.error('❌ Alternative URL also failed:', altResponse.status, altResponse.statusText);
                             }
                         }
-                        throw new Error(`HTTP ${response.status}: ${response.statusText}. URL: ${fileUrl}`);
+                        
+                        // Try with different encoding
+                        const encodedUrl = `${GITHUB_RAW_BASE}/${encodeURIComponent(file.path)}`;
+                        console.log('🔄 Trying fully encoded URL:', encodedUrl);
+                        try {
+                            const encodedResponse = await fetch(encodedUrl);
+                            if (encodedResponse.ok) {
+                                console.log('✅ Fully encoded URL worked!');
+                                const content = await encodedResponse.text();
+                                showFileContent(file, categoryName, content);
+                                return;
+                            }
+                        } catch (e) {
+                            console.error('❌ Encoded URL failed:', e);
+                        }
+                        
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}. File: ${file.path}`);
                     }
                     
                     const content = await response.text();
@@ -1582,6 +1973,7 @@
                 markAsRead(file.path);
                 
                 // Update URL hash for direct linking
+                console.log('📍 Updating URL hash with file.path:', JSON.stringify(file.path));
                 updateUrlHash(file.path);
                 
             } catch (error) {
@@ -1593,34 +1985,68 @@
 
         // Show file content
         function showFileContent(file, categoryName, content) {
+            console.log('🎨 showFileContent called for:', file.displayName);
+            
+            // Get content elements with null checking
             const contentHeader = document.getElementById('contentHeader');
             const breadcrumb = document.getElementById('breadcrumb');
             const contentTitle = document.getElementById('contentTitle');
             const contentMeta = document.getElementById('contentMeta');
             const contentBody = document.getElementById('contentBody');
             
-            // Update breadcrumb
+            // Verify all required elements exist
+            const requiredElements = {
+                contentHeader,
+                breadcrumb, 
+                contentTitle,
+                contentMeta,
+                contentBody
+            };
+            
+            const missingElements = Object.entries(requiredElements)
+                .filter(([name, element]) => !element)
+                .map(([name]) => name);
+                
+            if (missingElements.length > 0) {
+                console.error('❌ Missing required DOM elements:', missingElements);
+                showError(`UI Error: Missing elements - ${missingElements.join(', ')}. Please refresh the page.`);
+                return;
+            }
+            
+            console.log('✅ All content elements found, proceeding with file display');
+            
+            // CRITICAL: Make content header visible FIRST, then access child elements
+            contentHeader.style.display = 'block';
+            hideLoading(); // Make sure any loading states are cleared
+            
+            // Update breadcrumb with safe character escaping using sanitization functions
             breadcrumb.innerHTML = `
                 <span onclick="showWelcome()" style="cursor: pointer; color: var(--primary-color);">Home</span>
                 <span class="breadcrumb-separator">›</span>
-                <span onclick="expandFolder('${categoryName}')" style="cursor: pointer; color: var(--primary-color);">${formatDisplayName(categoryName)}</span>
+                <span onclick="expandFolder('${sanitizeForJS(categoryName)}'); event.stopPropagation();" style="cursor: pointer; color: var(--primary-color);">${sanitizeForDOM(formatDisplayName(categoryName))}</span>
                 <span class="breadcrumb-separator">›</span>
-                <span>${file.displayName}</span>
+                <span>${sanitizeForDOM(file.displayName)}</span>
             `;
             
-            // Update title and meta
-            contentTitle.textContent = file.displayName;
+            // Update title and meta with safety check using verified elements
+            console.log('📝 Setting content title:', { element: contentTitle, text: file.displayName });
+            if (contentTitle) {
+                contentTitle.textContent = file.displayName;
+            } else {
+                console.error('❌ contentTitle is null when trying to set textContent');
+                throw new Error('contentTitle element is null');
+            }
             contentMeta.innerHTML = `
                 <span>📁 ${formatDisplayName(categoryName)}</span>
                 <span>📄 ${file.type === 'markdown' ? 'Markdown' : 'PDF'}</span>
                 <span>📊 ${formatFileSize(file.size || 0)}</span>
-                <button class="pdf-button" onclick="downloadFile('${file.downloadUrl.replace(/'/g, "\\'")}', '${file.name.replace(/'/g, "\\'")}'); event.stopPropagation();" style="margin-left: 16px;">
+                <button class="pdf-button" onclick="downloadFile('${sanitizeForJS(file.downloadUrl || '')}', '${sanitizeForJS(file.name || file.displayName || '')}'); event.stopPropagation();" style="margin-left: 16px;">
                     💾 Download
                 </button>
-                <button class="pdf-button" onclick="viewInGitHub('${file.path.replace(/'/g, "\\'")}'); event.stopPropagation();" style="margin-left: 8px;">
+                <button class="pdf-button" onclick="viewInGitHub('${sanitizeForJS(file.path || '')}'); event.stopPropagation();" style="margin-left: 8px;">
                     📋 View in GitHub
                 </button>
-                <button class="pdf-button" onclick="copyFileLink('${file.path.replace(/'/g, "\\'")}'); event.stopPropagation();" style="margin-left: 8px;">
+                <button class="pdf-button" onclick="copyFileLink('${sanitizeForJS(file.path || '')}'); event.stopPropagation();" style="margin-left: 8px;">
                     🔗 Copy Link
                 </button>
             `;
@@ -1653,17 +2079,23 @@
             const contentMeta = document.getElementById('contentMeta');
             const contentBody = document.getElementById('contentBody');
             
-            // Update breadcrumb
+            // Update breadcrumb with safe character escaping using sanitization functions
             breadcrumb.innerHTML = `
                 <span onclick="showWelcome()" style="cursor: pointer; color: var(--primary-color);">Home</span>
                 <span class="breadcrumb-separator">›</span>
-                <span onclick="expandFolder('${categoryName}')" style="cursor: pointer; color: var(--primary-color);">${formatDisplayName(categoryName)}</span>
+                <span onclick="expandFolder('${sanitizeForJS(categoryName)}'); event.stopPropagation();" style="cursor: pointer; color: var(--primary-color);">${sanitizeForDOM(formatDisplayName(categoryName))}</span>
                 <span class="breadcrumb-separator">›</span>
-                <span>${file.displayName}</span>
+                <span>${sanitizeForDOM(file.displayName)}</span>
             `;
             
-            // Update title and meta
-            contentTitle.textContent = file.displayName;
+            // Update title and meta with safety check (PDF version)
+            console.log('📝 Setting PDF content title:', { element: contentTitle, text: file.displayName });
+            if (contentTitle) {
+                contentTitle.textContent = file.displayName;
+            } else {
+                console.error('❌ PDF contentTitle is null when trying to set textContent');
+                throw new Error('PDF contentTitle element is null');
+            }
             contentMeta.innerHTML = `
                 <span>📁 ${formatDisplayName(categoryName)}</span>
                 <span>📋 PDF Document</span>
@@ -1696,7 +2128,7 @@
                             <button class="pdf-button" onclick="downloadPdf()">
                                 💾 Download
                             </button>
-                            <button class="pdf-button" onclick="viewInGitHub('${file.path.replace(/'/g, "\\'")}')">
+                            <button class="pdf-button" onclick="viewInGitHub('${sanitizeForJS(file.path || '')}')">
                                 📋 View in GitHub
                             </button>
                         </div>
@@ -1939,6 +2371,11 @@
 
         // Load file by path (for internal markdown links)
         async function loadFileByPath(filePath) {
+            if (!filePath || typeof filePath !== 'string') {
+                console.warn('loadFileByPath called with invalid filePath:', filePath);
+                return;
+            }
+            
             console.log('Attempting to load file by path:', filePath);
             
             // Clean up the file path
@@ -1991,6 +2428,11 @@
 
         // Render markdown to HTML
         function renderMarkdown(markdown, filePath = '') {
+            if (!markdown || typeof markdown !== 'string') {
+                console.warn('renderMarkdown called with invalid markdown:', markdown);
+                return '<p>No content available</p>';
+            }
+            
             // Get the directory path for the current file to resolve relative images
             const fileDir = filePath ? filePath.substring(0, filePath.lastIndexOf('/')) : '';
             
@@ -2049,7 +2491,7 @@
                         }
                     }
                     
-                    absoluteSrc = absoluteSrc.replace(/ /g, '%20');
+                    absoluteSrc = encodeURI(absoluteSrc);
                     
                     // Build style string
                     let style = 'max-width: 100%; height: auto; border-radius: 8px; margin: 16px 0;';
@@ -2062,16 +2504,16 @@
                     const fallbackUrls = [];
                     
                     // Add standard image folder locations
-                    fallbackUrls.push(`${GITHUB_RAW_BASE}/${categoryName}/images/SD/${cleanSrc}`.replace(/ /g, '%20'));
-                    fallbackUrls.push(`${GITHUB_RAW_BASE}/${categoryName}/images/Popular%20Diffusion%20models/${cleanSrc}`.replace(/ /g, '%20'));
-                    fallbackUrls.push(`${GITHUB_RAW_BASE}/${categoryName}/images/VQVAE/${cleanSrc}`.replace(/ /g, '%20'));
-                    fallbackUrls.push(`${GITHUB_RAW_BASE}/${categoryName}/images/What%20are%20Diffusion%20Models/${cleanSrc}`.replace(/ /g, '%20'));
-                    fallbackUrls.push(`${GITHUB_RAW_BASE}/${categoryName}/images/style%20transfer/${cleanSrc}`.replace(/ /g, '%20'));
+                    fallbackUrls.push(encodeURI(`${GITHUB_RAW_BASE}/${categoryName}/images/SD/${cleanSrc}`));
+                    fallbackUrls.push(encodeURI(`${GITHUB_RAW_BASE}/${categoryName}/images/Popular%20Diffusion%20models/${cleanSrc}`));
+                    fallbackUrls.push(encodeURI(`${GITHUB_RAW_BASE}/${categoryName}/images/VQVAE/${cleanSrc}`));
+                    fallbackUrls.push(encodeURI(`${GITHUB_RAW_BASE}/${categoryName}/images/What%20are%20Diffusion%20Models/${cleanSrc}`));
+                    fallbackUrls.push(encodeURI(`${GITHUB_RAW_BASE}/${categoryName}/images/style%20transfer/${cleanSrc}`));
                     
                     // Add document-specific folders with hash codes
-                    fallbackUrls.push(`${GITHUB_RAW_BASE}/${categoryName}/Stable%20diffusion%203%20c73bab85d94944edbb991761fe6b6d06/${cleanSrc}`.replace(/ /g, '%20'));
-                    fallbackUrls.push(`${GITHUB_RAW_BASE}/${categoryName}/Diffusion%20models%20for%20video%20generation%204a81adda3eb6405cbe8db8685390307b/${cleanSrc}`.replace(/ /g, '%20'));
-                    fallbackUrls.push(`${GITHUB_RAW_BASE}/${categoryName}/InstructPix2Pix%20Learning%20to%20Follow%20Image%20Editing%20I%20873196964e104d4aa1fae9a777fd37f4/${cleanSrc}`.replace(/ /g, '%20'));
+                    fallbackUrls.push(encodeURI(`${GITHUB_RAW_BASE}/${categoryName}/Stable%20diffusion%203%20c73bab85d94944edbb991761fe6b6d06/${cleanSrc}`));
+                    fallbackUrls.push(encodeURI(`${GITHUB_RAW_BASE}/${categoryName}/Diffusion%20models%20for%20video%20generation%204a81adda3eb6405cbe8db8685390307b/${cleanSrc}`));
+                    fallbackUrls.push(encodeURI(`${GITHUB_RAW_BASE}/${categoryName}/InstructPix2Pix%20Learning%20to%20Follow%20Image%20Editing%20I%20873196964e104d4aa1fae9a777fd37f4/${cleanSrc}`));
                     
                     return `<img src="${absoluteSrc}" alt="${alt}" style="${style}" onerror="tryFallbackImage(this, ${JSON.stringify(fallbackUrls)}, '${alt || cleanSrc}')" onload="this.nextElementSibling.style.display='none';"><div style="display: none; padding: 12px; background: var(--surface-color); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-secondary); text-align: center;">📷 Image not found: ${alt || cleanSrc}</div>`;
                     
@@ -2089,10 +2531,26 @@
                     // Clean up the source path by removing encoded spaces and other issues
                     let cleanSrc = src.replace(/%20/g, ' ').replace(/^\s+/, '');
                     
+                    // Debug logging for ASMK and FLAME images
+                    if (src.toLowerCase().includes('asmk') || src.toLowerCase().includes('flame') || 
+                        cleanSrc.toLowerCase().includes('asmk') || cleanSrc.toLowerCase().includes('flame')) {
+                        console.log(`🖼️ Processing image:`, {
+                            originalSrc: src,
+                            cleanSrc: cleanSrc,
+                            fileDir: fileDir
+                        });
+                    }
+                    
                     // Fix malformed paths that start with encoded characters
                     cleanSrc = cleanSrc.replace(/^%[0-9a-fA-F]{2}/, '');
                     
-                    // Remove any leading hash codes or encoded content
+                    // Store whether we detected ASMK/DPT specific files for fallback URLs
+                    let isASMKorDPTFile = cleanSrc.includes('21c71bdab3cf80dfa08ed81f2119a8d8') || 
+                                         cleanSrc.includes('fb6ac57f98b8478099d71c4b45d8a4a8') ||
+                                         cleanSrc.toLowerCase().includes('asmk') || 
+                                         cleanSrc.toLowerCase().includes('aggregated%20selective');
+                    
+                    // Remove any leading hash codes or encoded content (but less aggressively)
                     cleanSrc = cleanSrc.replace(/^[0-9a-fA-F]{32}\//, '');
                     
                     if (cleanSrc.startsWith('./')) {
@@ -2112,24 +2570,49 @@
                         absoluteSrc = `${GITHUB_RAW_BASE}/${fileDir}/images/${cleanSrc}`;
                     }
                     
-                    // Encode the final URL properly
-                    absoluteSrc = absoluteSrc.replace(/ /g, '%20');
+                    // Encode the final URL properly with full URI encoding
+                    absoluteSrc = encodeURI(absoluteSrc);
+                    
+                    // Debug logging for final URL
+                    if (src.toLowerCase().includes('asmk') || src.toLowerCase().includes('flame') || 
+                        cleanSrc.toLowerCase().includes('asmk') || cleanSrc.toLowerCase().includes('flame')) {
+                        console.log(`🔗 Final URL constructed:`, absoluteSrc);
+                    }
                     
                     // Create fallback URLs for different possible locations
                     const categoryName = fileDir.split('/')[0];
                     const fallbackUrls = [];
                     
                     // Add standard image folder locations
-                    fallbackUrls.push(`${GITHUB_RAW_BASE}/${categoryName}/images/SD/${cleanSrc}`.replace(/ /g, '%20'));
-                    fallbackUrls.push(`${GITHUB_RAW_BASE}/${categoryName}/images/Popular%20Diffusion%20models/${cleanSrc}`.replace(/ /g, '%20'));
-                    fallbackUrls.push(`${GITHUB_RAW_BASE}/${categoryName}/images/VQVAE/${cleanSrc}`.replace(/ /g, '%20'));
-                    fallbackUrls.push(`${GITHUB_RAW_BASE}/${categoryName}/images/What%20are%20Diffusion%20Models/${cleanSrc}`.replace(/ /g, '%20'));
-                    fallbackUrls.push(`${GITHUB_RAW_BASE}/${categoryName}/images/style%20transfer/${cleanSrc}`.replace(/ /g, '%20'));
+                    fallbackUrls.push(encodeURI(`${GITHUB_RAW_BASE}/${categoryName}/images/SD/${cleanSrc}`));
+                    fallbackUrls.push(encodeURI(`${GITHUB_RAW_BASE}/${categoryName}/images/Popular%20Diffusion%20models/${cleanSrc}`));
+                    fallbackUrls.push(encodeURI(`${GITHUB_RAW_BASE}/${categoryName}/images/VQVAE/${cleanSrc}`));
+                    fallbackUrls.push(encodeURI(`${GITHUB_RAW_BASE}/${categoryName}/images/What%20are%20Diffusion%20Models/${cleanSrc}`));
+                    fallbackUrls.push(encodeURI(`${GITHUB_RAW_BASE}/${categoryName}/images/style%20transfer/${cleanSrc}`));
                     
                     // Add document-specific folders with hash codes
-                    fallbackUrls.push(`${GITHUB_RAW_BASE}/${categoryName}/Stable%20diffusion%203%20c73bab85d94944edbb991761fe6b6d06/${cleanSrc}`.replace(/ /g, '%20'));
-                    fallbackUrls.push(`${GITHUB_RAW_BASE}/${categoryName}/Diffusion%20models%20for%20video%20generation%204a81adda3eb6405cbe8db8685390307b/${cleanSrc}`.replace(/ /g, '%20'));
-                    fallbackUrls.push(`${GITHUB_RAW_BASE}/${categoryName}/InstructPix2Pix%20Learning%20to%20Follow%20Image%20Editing%20I%20873196964e104d4aa1fae9a777fd37f4/${cleanSrc}`.replace(/ /g, '%20'));
+                    fallbackUrls.push(encodeURI(`${GITHUB_RAW_BASE}/${categoryName}/Stable%20diffusion%203%20c73bab85d94944edbb991761fe6b6d06/${cleanSrc}`));
+                    fallbackUrls.push(encodeURI(`${GITHUB_RAW_BASE}/${categoryName}/Diffusion%20models%20for%20video%20generation%204a81adda3eb6405cbe8db8685390307b/${cleanSrc}`));
+                    fallbackUrls.push(encodeURI(`${GITHUB_RAW_BASE}/${categoryName}/InstructPix2Pix%20Learning%20to%20Follow%20Image%20Editing%20I%20873196964e104d4aa1fae9a777fd37f4/${cleanSrc}`));
+                    
+                    // Add specific folders for ASMK and DPT only when we detect these specific files
+                    if (isASMKorDPTFile || fileDir.toLowerCase().includes('asmk') || fileDir.toLowerCase().includes('dpt')) {
+                        fallbackUrls.push(encodeURI(`${GITHUB_RAW_BASE}/${categoryName}/Aggregated%20Selective%20Match%20Kernels%20(asmk)%2021c71bdab3cf80dfa08ed81f2119a8d8/${cleanSrc}`));
+                        fallbackUrls.push(encodeURI(`${GITHUB_RAW_BASE}/${categoryName}/DPT%20Vision%20Transformers%20for%20Dense%20Prediction%20fb6ac57f98b8478099d71c4b45d8a4a8/${cleanSrc}`));
+                        fallbackUrls.push(encodeURI(`${GITHUB_RAW_BASE}/${categoryName}/MiDaS%20for%20Monocular%20Depth%20Estimation%20f3bc8fad76294dd58c257b259d2ba896/${cleanSrc}`));
+                    }
+                    
+                    // Add additional fallback paths for ASMK/DPT files
+                    if (isASMKorDPTFile) {
+                        // Try with the current fileDir as base
+                        fallbackUrls.push(encodeURI(`${GITHUB_RAW_BASE}/${fileDir}/${cleanSrc}`));
+                    }
+                    
+                    // Debug logging for fallback URLs
+                    if (src.toLowerCase().includes('asmk') || src.toLowerCase().includes('flame') || 
+                        cleanSrc.toLowerCase().includes('asmk') || cleanSrc.toLowerCase().includes('flame')) {
+                        console.log(`📋 Fallback URLs:`, fallbackUrls);
+                    }
                     
                     return `<img src="${absoluteSrc}" alt="${alt}" style="max-width: 100%; height: auto; border-radius: 8px; margin: 16px 0;" onerror="tryFallbackImage(this, ${JSON.stringify(fallbackUrls)}, '${alt || cleanSrc}')" onload="this.nextElementSibling.style.display='none';"><div style="display: none; padding: 12px; background: var(--surface-color); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-secondary); text-align: center;">📷 Image not found: ${alt || cleanSrc}</div>`;
                     
@@ -2143,10 +2626,26 @@
                         let absoluteSrc;
                         let cleanUrl = url.replace(/%20/g, ' ').replace(/^\s+/, '');
                         
+                        // Debug logging for ASMK and FLAME images
+                        if (url.toLowerCase().includes('asmk') || url.toLowerCase().includes('flame') || 
+                            cleanUrl.toLowerCase().includes('asmk') || cleanUrl.toLowerCase().includes('flame')) {
+                            console.log(`🖼️ Processing link image:`, {
+                                originalUrl: url,
+                                cleanUrl: cleanUrl,
+                                fileDir: fileDir
+                            });
+                        }
+                        
                         // Fix malformed paths that start with encoded characters
                         cleanUrl = cleanUrl.replace(/^%[0-9a-fA-F]{2}/, '');
                         
-                        // Remove any leading hash codes or encoded content
+                        // Store whether we detected ASMK/DPT specific files for fallback URLs
+                        let isASMKorDPTUrl = cleanUrl.includes('21c71bdab3cf80dfa08ed81f2119a8d8') || 
+                                            cleanUrl.includes('fb6ac57f98b8478099d71c4b45d8a4a8') ||
+                                            cleanUrl.toLowerCase().includes('asmk') || 
+                                            cleanUrl.toLowerCase().includes('aggregated%20selective');
+                        
+                        // Remove any leading hash codes or encoded content (but less aggressively)
                         cleanUrl = cleanUrl.replace(/^[0-9a-fA-F]{32}\//, '');
                         
                         if (cleanUrl.startsWith('http') || cleanUrl.startsWith('//')) {
@@ -2162,23 +2661,36 @@
                         }
                         
                         // Encode the final URL properly
-                        absoluteSrc = absoluteSrc.replace(/ /g, '%20');
+                        absoluteSrc = encodeURI(absoluteSrc);
                         
                         // Create fallback URLs for different possible locations
                         const categoryName = fileDir.split('/')[0];
                         const fallbackUrls = [];
                         
                         // Add standard image folder locations
-                        fallbackUrls.push(`${GITHUB_RAW_BASE}/${categoryName}/images/SD/${cleanUrl}`.replace(/ /g, '%20'));
-                        fallbackUrls.push(`${GITHUB_RAW_BASE}/${categoryName}/images/Popular%20Diffusion%20models/${cleanUrl}`.replace(/ /g, '%20'));
-                        fallbackUrls.push(`${GITHUB_RAW_BASE}/${categoryName}/images/VQVAE/${cleanUrl}`.replace(/ /g, '%20'));
-                        fallbackUrls.push(`${GITHUB_RAW_BASE}/${categoryName}/images/What%20are%20Diffusion%20Models/${cleanUrl}`.replace(/ /g, '%20'));
-                        fallbackUrls.push(`${GITHUB_RAW_BASE}/${categoryName}/images/style%20transfer/${cleanUrl}`.replace(/ /g, '%20'));
+                        fallbackUrls.push(encodeURI(`${GITHUB_RAW_BASE}/${categoryName}/images/SD/${cleanUrl}`));
+                        fallbackUrls.push(encodeURI(`${GITHUB_RAW_BASE}/${categoryName}/images/Popular%20Diffusion%20models/${cleanUrl}`));
+                        fallbackUrls.push(encodeURI(`${GITHUB_RAW_BASE}/${categoryName}/images/VQVAE/${cleanUrl}`));
+                        fallbackUrls.push(encodeURI(`${GITHUB_RAW_BASE}/${categoryName}/images/What%20are%20Diffusion%20Models/${cleanUrl}`));
+                        fallbackUrls.push(encodeURI(`${GITHUB_RAW_BASE}/${categoryName}/images/style%20transfer/${cleanUrl}`));
                         
                         // Add document-specific folders with hash codes
-                        fallbackUrls.push(`${GITHUB_RAW_BASE}/${categoryName}/Stable%20diffusion%203%20c73bab85d94944edbb991761fe6b6d06/${cleanUrl}`.replace(/ /g, '%20'));
-                        fallbackUrls.push(`${GITHUB_RAW_BASE}/${categoryName}/Diffusion%20models%20for%20video%20generation%204a81adda3eb6405cbe8db8685390307b/${cleanUrl}`.replace(/ /g, '%20'));
-                        fallbackUrls.push(`${GITHUB_RAW_BASE}/${categoryName}/InstructPix2Pix%20Learning%20to%20Follow%20Image%20Editing%20I%20873196964e104d4aa1fae9a777fd37f4/${cleanUrl}`.replace(/ /g, '%20'));
+                        fallbackUrls.push(encodeURI(`${GITHUB_RAW_BASE}/${categoryName}/Stable%20diffusion%203%20c73bab85d94944edbb991761fe6b6d06/${cleanUrl}`));
+                        fallbackUrls.push(encodeURI(`${GITHUB_RAW_BASE}/${categoryName}/Diffusion%20models%20for%20video%20generation%204a81adda3eb6405cbe8db8685390307b/${cleanUrl}`));
+                        fallbackUrls.push(encodeURI(`${GITHUB_RAW_BASE}/${categoryName}/InstructPix2Pix%20Learning%20to%20Follow%20Image%20Editing%20I%20873196964e104d4aa1fae9a777fd37f4/${cleanUrl}`));
+                        
+                        // Add specific folders for ASMK and DPT only when we detect these specific files
+                        if (isASMKorDPTUrl || fileDir.toLowerCase().includes('asmk') || fileDir.toLowerCase().includes('dpt')) {
+                            fallbackUrls.push(encodeURI(`${GITHUB_RAW_BASE}/${categoryName}/Aggregated%20Selective%20Match%20Kernels%20(asmk)%2021c71bdab3cf80dfa08ed81f2119a8d8/${cleanUrl}`));
+                            fallbackUrls.push(encodeURI(`${GITHUB_RAW_BASE}/${categoryName}/DPT%20Vision%20Transformers%20for%20Dense%20Prediction%20fb6ac57f98b8478099d71c4b45d8a4a8/${cleanUrl}`));
+                            fallbackUrls.push(encodeURI(`${GITHUB_RAW_BASE}/${categoryName}/MiDaS%20for%20Monocular%20Depth%20Estimation%20f3bc8fad76294dd58c257b259d2ba896/${cleanUrl}`));
+                        }
+                        
+                        // Add additional fallback paths for ASMK/DPT files
+                        if (isASMKorDPTUrl) {
+                            // Try with the current fileDir as base
+                            fallbackUrls.push(encodeURI(`${GITHUB_RAW_BASE}/${fileDir}/${cleanUrl}`));
+                        }
                         
                         return `<img src="${absoluteSrc}" alt="${text}" style="max-width: 100%; height: auto; border-radius: 8px; margin: 16px 0;" onerror="tryFallbackImage(this, ${JSON.stringify(fallbackUrls)}, '${text}')" onload="this.nextElementSibling.style.display='none';"><div style="display: none; padding: 12px; background: var(--surface-color); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-secondary); text-align: center;">📷 Image not found: ${text}</div>`;
                         
@@ -2318,6 +2830,358 @@
         }
 
         // Show welcome screen
+        async function fetchRecentCommits() {
+            try {
+                console.log('🔍 Fetching recent commits from GitHub API...');
+                const response = await createGitHubRequest(`${GITHUB_API_BASE}/commits?per_page=50`);
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch commits: ${response.status}`);
+                }
+                
+                const commits = await response.json();
+                console.log(`📊 Recent commits fetched: ${commits.length}`);
+                
+                // Extract files from recent commits and get the most recent update for each file
+                const fileUpdateMap = new Map();
+                
+                // Process commits in parallel for speed
+                const commitPromises = commits.slice(0, 20).map(async (commit) => {
+                    try {
+                        const commitResponse = await createGitHubRequest(commit.url);
+                        if (commitResponse.ok) {
+                            const commitDetails = await commitResponse.json();
+                            
+                            if (commitDetails.files) {
+                                return commitDetails.files
+                                    .filter(file => {
+                                        const filename = file.filename.toLowerCase();
+                                        return (filename.endsWith('.md') || filename.endsWith('.pdf')) && 
+                                               !filename.includes('readme') &&
+                                               !filename.endsWith('readme.txt') &&
+                                               !filename.endsWith('readme.md') &&
+                                               !fileUpdateMap.has(file.filename);
+                                    })
+                                    .map(file => ({
+                                        path: file.filename,
+                                        lastModified: commit.commit.committer.date,
+                                        commitMessage: commit.commit.message,
+                                        status: file.status,
+                                        commitSha: commit.sha
+                                    }));
+                            }
+                        }
+                    } catch (error) {
+                        console.log('Error fetching commit details:', error);
+                        return [];
+                    }
+                    return [];
+                });
+                
+                // Wait for all commit details
+                const allFiles = await Promise.all(commitPromises);
+                
+                // Flatten and add to map
+                allFiles.flat().forEach(file => {
+                    if (file && !fileUpdateMap.has(file.path)) {
+                        // Log specific files for debugging
+                        if (file.path.toLowerCase().includes('dust3r') || 
+                            file.path.toLowerCase().includes('mast3r') || 
+                            file.path.toLowerCase().includes('asmk') ||
+                            file.path.toLowerCase().includes('flame')) {
+                            console.log(`🎯 Found target file: ${file.path}, committed: ${file.lastModified}`);
+                        }
+                        
+                        fileUpdateMap.set(file.path, file);
+                    }
+                });
+                
+                const recentFiles = Array.from(fileUpdateMap.values())
+                    .sort((a, b) => new Date(b.lastModified) - new Date(a.lastModified))
+                    .slice(0, 3);
+                
+                console.log('📋 Top 3 most recent files found:');
+                recentFiles.forEach((file, index) => {
+                    console.log(`${index + 1}. ${file.path} - ${file.lastModified}`);
+                });
+                
+                return recentFiles;
+                    
+            } catch (error) {
+                console.error('❌ Failed to fetch recent commits:', error);
+                return [];
+            }
+        }
+
+        async function updateRecentFilesFromCommits(commitFiles) {
+            console.log('🔄 Updating recent files from commit data...');
+            
+            // Map commit files to the recentFiles format
+            const mappedFiles = [];
+            
+            for (const commitFile of commitFiles) {
+                // Find the file in our repository data to get display info
+                let fileInfo = null;
+                let category = '';
+                let categoryDisplayName = '';
+                
+                // Search through all categories to find this file
+                for (const [catKey, catData] of Object.entries(repositoryData)) {
+                    const found = catData.files.find(f => 
+                        f.path === commitFile.path || 
+                        f.path.endsWith(commitFile.path) ||
+                        commitFile.path.endsWith(f.name)
+                    );
+                    if (found) {
+                        fileInfo = found;
+                        category = catKey;
+                        categoryDisplayName = catData.displayName;
+                        break;
+                    }
+                }
+                
+                // If not found in repository data, create basic info from commit data
+                if (!fileInfo) {
+                    const fileName = commitFile.path.split('/').pop();
+                    const cleanName = fileName.replace(/\.md$/, '')
+                        .replace(/[_-]/g, ' ')
+                        .replace(/([：:])([^\s])/g, '$1 $2'); // Add space after colons if missing
+                    
+                    // Try to determine category from path
+                    if (commitFile.path.toLowerCase().includes('3d') || 
+                        commitFile.path.toLowerCase().includes('dust3r') || 
+                        commitFile.path.toLowerCase().includes('mast3r') ||
+                        commitFile.path.toLowerCase().includes('flame')) {
+                        category = '3D reconstruction';
+                        categoryDisplayName = '3D Reconstruction';
+                    } else if (commitFile.path.toLowerCase().includes('matching') || 
+                               commitFile.path.toLowerCase().includes('asmk')) {
+                        category = 'Matching&tracking';
+                        categoryDisplayName = 'Matching & Tracking';
+                    } else if (commitFile.path.toLowerCase().includes('transformer')) {
+                        category = 'Transformers&beyond';
+                        categoryDisplayName = 'Transformers & Beyond';
+                    } else {
+                        category = 'General';
+                        categoryDisplayName = 'General';
+                    }
+                    
+                    fileInfo = {
+                        name: fileName,
+                        displayName: cleanName,
+                        path: commitFile.path.replace(/\/+$/, ''), // Remove trailing slashes
+                        type: 'markdown',
+                        downloadUrl: `${GITHUB_RAW_BASE}/${encodeURIComponent(commitFile.path.replace(/\/+$/, '')).replace(/%2F/g, '/')}`
+                    };
+                }
+                
+                // Create summary based on file name
+                let summary = '';
+                const displayName = fileInfo.displayName.toLowerCase();
+                if (displayName.includes('dust3r')) {
+                    summary = 'Revolutionary 3D reconstruction using neural radiance fields';
+                } else if (displayName.includes('mast3r')) {
+                    summary = 'Advanced matching and 3D reconstruction pipeline';
+                } else if (displayName.includes('asmk')) {
+                    summary = 'Aggregated Selective Match Kernels for image retrieval';
+                } else if (displayName.includes('flame')) {
+                    summary = 'Faces Learned with an Articulated Model and Expressions';
+                } else if (displayName.includes('flash attention')) {
+                    summary = 'Memory-efficient attention mechanism for transformers';
+                } else if (displayName.includes('mamba')) {
+                    summary = 'Linear-time sequence modeling with state spaces';
+                } else {
+                    summary = categoryDisplayName + ' research and implementation';
+                }
+                
+                mappedFiles.push({
+                    name: fileInfo.name,
+                    path: fileInfo.path.replace(/\/+$/, ''), // Remove trailing slashes
+                    displayName: fileInfo.displayName,
+                    summary: summary,
+                    category: category,
+                    categoryDisplayName: categoryDisplayName,
+                    type: fileInfo.type,
+                    downloadUrl: fileInfo.downloadUrl,
+                    timestamp: new Date(commitFile.lastModified).getTime(),
+                    commitMessage: commitFile.commitMessage,
+                    commitSha: commitFile.commitSha
+                });
+            }
+            
+            // Update the global recentFiles array
+            recentFiles = mappedFiles;
+            
+            // Save to localStorage
+            localStorage.setItem('ai-journal-recent', JSON.stringify(recentFiles));
+            
+            console.log('✅ Updated recent files with commit data:', recentFiles.length);
+            recentFiles.forEach((file, index) => {
+                console.log(`${index + 1}. ${file.displayName} - ${new Date(file.timestamp).toLocaleDateString()}`);
+            });
+        }
+
+        async function generateRecentUpdatesList() {
+            // Clear any cached data to ensure fresh API calls
+            localStorage.removeItem('ai-journal-cached-data');
+            
+            // First try to get real commit data
+            try {
+                console.log('🔄 Fetching real recent commits for recent updates...');
+                const recentCommitFiles = await fetchRecentCommits();
+                
+                if (recentCommitFiles && recentCommitFiles.length > 0) {
+                    console.log('✅ Found recent commit files:', recentCommitFiles.length);
+                    await updateRecentFilesFromCommits(recentCommitFiles);
+                    showFallbackRecentFiles(); // This will now use the updated recentFiles array
+                } else {
+                    console.log('⚠️ No recent commit files found, using fallback');
+                    showFallbackRecentFiles();
+                }
+            } catch (error) {
+                console.log('❌ Failed to fetch recent commits, using fallback:', error);
+                showFallbackRecentFiles();
+            }
+            
+            // Don't return placeholder text - let showFallbackRecentFiles handle the display
+            return '';
+        }
+
+        function updateRecentUpdatesDisplay(recentFiles) {
+            const categoryIcons = {
+                '3D reconstruction': '🏗️',
+                'CNN_DL': '🧠',
+                'Diffusion_models_GAN': '🎨',
+                'Generative AI': '✨',
+                'LLM': '🗣️',
+                'LoRA': '🔧',
+                'Transformers&beyond': '🔀',
+                'computer vision': '👁️',
+                'multimodal': '🔄',
+                'optimization': '⚡',
+                'retrieval': '🔍',
+                'video': '🎬'
+            };
+
+            const recentUpdatesList = document.getElementById('recentUpdatesList');
+            if (recentUpdatesList) {
+                const html = recentFiles.map(file => {
+                    const timeAgo = getTimeAgo(new Date(file.lastModified));
+                    const category = file.path.split('/')[0];
+                    const icon = categoryIcons[category] || '📄';
+                    const fileName = file.path.split('/').pop().replace('.md', '').replace('.pdf', '');
+                    const displayName = formatFileDisplayName(fileName);
+                    
+                    return `
+                        <div class="recent-file-item" onclick="loadFileByPath('${file.path}')">
+                            <div class="recent-file-content">
+                                <div class="recent-file-title">${icon} ${displayName}</div>
+                                <div class="recent-file-meta">
+                                    <span>📁 ${formatDisplayName(category)}</span>
+                                    <span>⏱️ Updated ${timeAgo}</span>
+                                </div>
+                            </div>
+                            <div class="recent-file-type">MARKDOWN</div>
+                        </div>
+                    `;
+                }).join('');
+                
+                recentUpdatesList.innerHTML = html;
+            }
+        }
+
+        function showFallbackRecentFiles() {
+            const recentUpdatesList = document.getElementById('recentUpdatesList');
+            if (!recentUpdatesList) return;
+            
+            console.log('📚 Showing fallback recent files, recentFiles.length:', recentFiles.length);
+            
+            if (recentFiles.length === 0) {
+                recentUpdatesList.innerHTML = '<p style="color: var(--text-secondary); text-align: center; padding: 20px;">No recent files available</p>';
+                return;
+            }
+            
+            // Use the recent files data to show recent updates
+            const recentFilesToShow = recentFiles.slice(0, 3); // Show top 3 for cleaner look
+            
+            // Clear existing content first
+            recentUpdatesList.innerHTML = '';
+            
+            recentFilesToShow.forEach(file => {
+                // Calculate time ago from timestamp
+                const timeAgo = formatTimeAgo(file.timestamp);
+                const categoryIcon = getCategoryIcon(file.category);
+                
+                const recentItem = document.createElement('div');
+                recentItem.className = 'recent-file-item'; // Use existing CSS class
+                recentItem.onclick = () => {
+                    console.log('🎯 Recent update clicked:', file);
+                    loadFile(file, file.category);
+                };
+                
+                recentItem.innerHTML = `
+                    <div class="recent-file-content">
+                        <div class="recent-file-title">${categoryIcon} ${sanitizeForDOM(file.displayName)}</div>
+                        <div class="recent-file-meta">
+                            <span>${sanitizeForDOM(file.summary || file.categoryDisplayName)}</span>
+                            <span class="recent-file-type">${file.categoryDisplayName}</span>
+                        </div>
+                    </div>
+                    <div class="update-time" style="font-size: 12px; color: var(--text-secondary); font-weight: 500;">${timeAgo}</div>
+                `;
+                
+                recentUpdatesList.appendChild(recentItem);
+            });
+            
+            console.log('✅ Fallback recent files displayed');
+        }
+        
+        // Helper function to format time ago
+        function formatTimeAgo(timestamp) {
+            const now = Date.now();
+            const diff = now - timestamp;
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            const minutes = Math.floor(diff / (1000 * 60));
+            
+            if (days > 0) {
+                return `${days} day${days > 1 ? 's' : ''} ago`;
+            } else if (hours > 0) {
+                return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+            } else if (minutes > 0) {
+                return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+            } else {
+                return 'Just now';
+            }
+        }
+        
+        function getCategoryIcon(category) {
+            const categoryIcons = {
+                '3D reconstruction': '🎯',
+                'CNN_DL': '🧠',
+                'Diffusion_models_GAN': '🎨',
+                'Generative AI': '✨',
+                'LLM': '💬',
+                'MDE': '📏',
+                'Matching&tracking': '🔍',
+                'Tools_Usage': '🛠️',
+                'Transformers&beyond': '🔀',
+                'VO_VIO_VSLAM': '📍'
+            };
+            return categoryIcons[category] || '📄';
+        }
+
+        function getTimeAgo(date) {
+            const now = new Date();
+            const diffTime = Math.abs(now - date);
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            
+            if (diffDays === 0) return 'today';
+            if (diffDays === 1) return 'yesterday';
+            if (diffDays < 7) return `${diffDays} days ago`;
+            if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
+            return `${Math.floor(diffDays / 30)} months ago`;
+        }
+
         function showWelcome() {
             const contentHeader = document.getElementById('contentHeader');
             const contentBody = document.getElementById('contentBody');
@@ -2330,20 +3194,27 @@
                     
                     <div class="welcome-stats">
                         <div class="stat-card">
-                            <div class="stat-value">${allFiles.length}</div>
+                            <div class="stat-value" id="totalFiles">${allFiles.length}</div>
                             <div class="stat-label">Total Files</div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-value">${Object.keys(repositoryData).length}</div>
+                            <div class="stat-value" id="totalCategories">${Object.keys(repositoryData).length}</div>
                             <div class="stat-label">Categories</div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-value">${readFiles.length}</div>
+                            <div class="stat-value" id="readFiles">${readFiles.length}</div>
                             <div class="stat-label">Files Read</div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-value">${favorites.length}</div>
+                            <div class="stat-value" id="favoriteCount">${favorites.length}</div>
                             <div class="stat-label">Favorites</div>
+                        </div>
+                    </div>
+
+                    <div class="recent-updates">
+                        <h2 class="section-title">📝 Recent Updates</h2>
+                        <div class="recent-files-list" id="recentUpdatesList">
+                            <div style="text-align: center; padding: 20px; color: var(--text-secondary);">🔄 Loading recent updates...</div>
                         </div>
                     </div>
 
@@ -2363,11 +3234,6 @@
                             <div class="quick-access-title">Generative Models</div>
                             <div class="quick-access-desc">Diffusion models, GANs, and image generation</div>
                         </div>
-                        <div class="quick-access-item" onclick="expandFolder('Transformers&beyond')">
-                            <div class="quick-access-icon">🔀</div>
-                            <div class="quick-access-title">Transformers & Beyond</div>
-                            <div class="quick-access-desc">Attention mechanisms and advanced architectures</div>
-                        </div>
                     </div>
                 </div>
             `;
@@ -2378,6 +3244,12 @@
             });
             
             currentFile = null;
+            
+            // Ensure stats are updated with current values after welcome screen is shown
+            updateStats();
+            
+            // Populate the recent files section now that the welcome screen is ready
+            generateRecentUpdatesList();
         }
 
         // Search functionality
@@ -2508,17 +3380,42 @@
         }
 
         function renderRecentFiles() {
+            console.log('🕒 renderRecentFiles called, recentFiles.length:', recentFiles.length);
             const recentFilesElement = document.getElementById('recentFiles');
             
+            if (!recentFilesElement) {
+                console.error('❌ recentFiles element not found!');
+                return;
+            }
+            
             if (recentFiles.length === 0) {
+                console.log('⚠️ No recent files to display');
                 recentFilesElement.innerHTML = '<div style="color: var(--text-secondary); font-size: 14px; padding: 8px;">No recent files</div>';
             } else {
-                recentFilesElement.innerHTML = recentFiles.map(file => `
-                    <div class="file-item" onclick="loadFile(${JSON.stringify(file).replace(/"/g, '&quot;')}, '${file.category}')">
-                        <span class="file-icon">${file.type === 'markdown' ? '📄' : '📋'}</span>
-                        <span class="file-name">${file.displayName}</span>
-                    </div>
-                `).join('');
+                console.log('📄 Rendering', recentFiles.length, 'recent files');
+                recentFilesElement.innerHTML = '';
+                
+                recentFiles.forEach((file, index) => {
+                    console.log(`🔍 Processing recent file ${index + 1}:`, file);
+                    
+                    const fileDiv = document.createElement('div');
+                    fileDiv.className = 'file-item';
+                    fileDiv.onclick = () => {
+                        console.log('🎯 Recent file clicked:', file);
+                        loadFile(file, file.category);
+                    };
+                    
+                    const icon = file.type === 'markdown' ? '📄' : '📋';
+                    const sanitizedDisplayName = sanitizeForDOM(file.displayName);
+                    
+                    fileDiv.innerHTML = `
+                        <span class="file-icon">${icon}</span>
+                        <span class="file-name">${sanitizedDisplayName}</span>
+                    `;
+                    
+                    recentFilesElement.appendChild(fileDiv);
+                    console.log(`✅ Added recent file ${index + 1}:`, sanitizedDisplayName);
+                });
             }
         }
 
@@ -2533,10 +3430,24 @@
 
         // Update statistics
         function updateStats() {
-            document.getElementById('totalFiles').textContent = allFiles.length;
-            document.getElementById('totalCategories').textContent = Object.keys(repositoryData).length;
-            document.getElementById('readFiles').textContent = readFiles.length;
-            document.getElementById('favoriteCount').textContent = favorites.length;
+            console.log('📊 Updating stats:', {
+                totalFiles: allFiles.length,
+                totalCategories: Object.keys(repositoryData).length,
+                readFiles: readFiles.length,
+                favorites: favorites.length
+            });
+            
+            const totalFilesEl = document.getElementById('totalFiles');
+            const totalCategoriesEl = document.getElementById('totalCategories');
+            const readFilesEl = document.getElementById('readFiles');
+            const favoriteCountEl = document.getElementById('favoriteCount');
+            
+            if (totalFilesEl) totalFilesEl.textContent = allFiles.length;
+            if (totalCategoriesEl) totalCategoriesEl.textContent = Object.keys(repositoryData).length;
+            if (readFilesEl) readFilesEl.textContent = readFiles.length;
+            if (favoriteCountEl) favoriteCountEl.textContent = favorites.length;
+            
+            console.log('✅ Stats updated successfully');
         }
 
         // Theme management
@@ -2548,6 +3459,32 @@
             document.getElementById('themeIcon').textContent = newTheme === 'dark' ? '☀️' : '🌙';
             
             localStorage.setItem('ai-journal-theme', newTheme);
+        }
+
+        // GitHub Token Management
+        function showGitHubTokenDialog() {
+            const currentToken = localStorage.getItem('github-token') || '';
+            const tokenValue = prompt(
+                `🔑 GitHub Personal Access Token (Optional)\n\n` +
+                `This increases your API rate limit from 60 to 5,000 requests/hour.\n\n` +
+                `To create a token:\n` +
+                `1. Go to GitHub.com → Settings → Developer settings\n` +
+                `2. Personal access tokens → Generate new token\n` +
+                `3. Only needs 'public_repo' permission\n` +
+                `4. Copy and paste the token below\n\n` +
+                `Leave empty to remove existing token:`,
+                currentToken
+            );
+            
+            if (tokenValue !== null) {
+                if (tokenValue.trim()) {
+                    localStorage.setItem('github-token', tokenValue.trim());
+                    showNotification('🔑 GitHub token saved! Refresh to use higher rate limit.', 'success');
+                } else {
+                    localStorage.removeItem('github-token');
+                    showNotification('🔑 GitHub token removed.', 'info');
+                }
+            }
         }
 
         // Mobile sidebar toggle
@@ -2572,6 +3509,15 @@
             const contentBody = document.getElementById('contentBody');
             contentBody.classList.add('loading');
             contentBody.innerHTML = `<div class="loading">${message}</div>`;
+        }
+        
+        function hideLoading() {
+            const contentBody = document.getElementById('contentBody');
+            contentBody.classList.remove('loading');
+            const loadingElement = contentBody.querySelector('.loading');
+            if (loadingElement) {
+                loadingElement.remove();
+            }
         }
 
         function showError(message) {
@@ -2628,8 +3574,157 @@
 
         // Update URL when navigating to a file
         function updateUrlHash(filePath) {
-            const newHash = `#file:${encodeURIComponent(filePath)}`;
+            console.log('🔗 updateUrlHash called with filePath:', JSON.stringify(filePath));
+            // Clean the file path by removing trailing slashes
+            const cleanedPath = filePath.replace(/\/+$/, '');
+            console.log('🧹 Cleaned path:', JSON.stringify(cleanedPath));
+            const encoded = encodeURIComponent(cleanedPath);
+            const newHash = `#file:${encoded}`;
+            console.log('🔗 Final hash:', newHash);
             history.pushState(null, null, newHash);
+        }
+
+        // Real-time update system
+        let updateInterval = null;
+        let lastCommitSha = null;
+        
+        function startRealtimeUpdates() {
+            const hasToken = !!localStorage.getItem('github-token');
+            const updateFrequency = hasToken ? 2 * 60 * 1000 : 10 * 60 * 1000; // 2min with token, 10min without
+            
+            console.log(`🔄 Starting real-time updates every ${updateFrequency/1000/60} minutes (Token: ${hasToken ? 'Yes' : 'No'})`);
+            
+            if (updateInterval) {
+                clearInterval(updateInterval);
+            }
+            
+            updateInterval = setInterval(async () => {
+                await checkForNewCommits();
+            }, updateFrequency);
+        }
+        
+        function stopRealtimeUpdates() {
+            if (updateInterval) {
+                clearInterval(updateInterval);
+                updateInterval = null;
+                console.log('⏹️ Stopped real-time updates');
+            }
+        }
+        
+        async function checkForNewCommits() {
+            try {
+                console.log('🔍 Checking for new commits...');
+                const response = await createGitHubRequest(`${GITHUB_API_BASE}/commits?per_page=1`);
+                
+                if (!response.ok) {
+                    console.warn('⚠️ Failed to check for new commits:', response.status);
+                    return;
+                }
+                
+                const commits = await response.json();
+                if (commits.length === 0) return;
+                
+                const latestCommitSha = commits[0].sha;
+                
+                if (lastCommitSha === null) {
+                    // First check, just store the SHA
+                    lastCommitSha = latestCommitSha;
+                    console.log('📝 Initial commit SHA stored:', latestCommitSha.substring(0, 8));
+                    return;
+                }
+                
+                if (latestCommitSha !== lastCommitSha) {
+                    console.log('🆕 New commit detected!', {
+                        old: lastCommitSha.substring(0, 8),
+                        new: latestCommitSha.substring(0, 8),
+                        message: commits[0].commit.message.substring(0, 50) + '...'
+                    });
+                    
+                    lastCommitSha = latestCommitSha;
+                    
+                    // Update recent files
+                    await updateRecentFilesFromNewCommits();
+                    
+                    // Show notification
+                    showNotification('🆕 New commit detected! Recent files updated.', 'success');
+                    
+                    // If on welcome screen, refresh the recent files display
+                    const contentBody = document.getElementById('contentBody');
+                    if (contentBody && contentBody.innerHTML.includes('welcome-content')) {
+                        console.log('🏠 On welcome screen, refreshing recent files...');
+                        generateRecentUpdatesList();
+                    }
+                }
+                
+            } catch (error) {
+                console.warn('⚠️ Error checking for new commits:', error);
+            }
+        }
+        
+        async function updateRecentFilesFromNewCommits() {
+            try {
+                console.log('🔄 Updating recent files from new commits...');
+                const recentCommitFiles = await fetchRecentCommits();
+                
+                if (recentCommitFiles && recentCommitFiles.length > 0) {
+                    await updateRecentFilesFromCommits(recentCommitFiles);
+                    console.log('✅ Recent files updated with new commits');
+                }
+            } catch (error) {
+                console.warn('⚠️ Failed to update recent files:', error);
+            }
+        }
+        
+        // GitHub token management
+        function updateGitHubToken() {
+            const hasToken = !!localStorage.getItem('github-token');
+            const message = hasToken ? 
+                'Current token is active.\n\nEnter new token to update, or type "remove" to delete:' :
+                'Enter your GitHub Personal Access Token (optional but recommended):\n\n• Increases rate limit from 60 to 5,000 requests/hour\n• Enables 2-minute update checks instead of 10-minute\n• Better performance for real-time updates';
+                
+            const token = prompt(message);
+            
+            if (token === null) return; // User cancelled
+            
+            if (token.toLowerCase() === 'remove') {
+                removeGitHubToken();
+                return;
+            }
+            
+            if (token.trim()) {
+                localStorage.setItem('github-token', token.trim());
+                showNotification('✅ GitHub token saved! Rate limit increased to 5,000/hour', 'success');
+                updateTokenIcon();
+                // Restart updates with new token
+                startRealtimeUpdates();
+            }
+        }
+        
+        function removeGitHubToken() {
+            localStorage.removeItem('github-token');
+            showNotification('🗑️ GitHub token removed. Using anonymous access (60 requests/hour)', 'info');
+            // Restart updates without token
+            startRealtimeUpdates();
+        }
+        
+        function showTokenStatus() {
+            const hasToken = !!localStorage.getItem('github-token');
+            const status = hasToken ? 
+                '✅ GitHub token configured\n• Rate limit: 5,000 requests/hour\n• Update frequency: Every 2 minutes\n\nClick 🔑 to update token or type "remove" to delete current token' :
+                '⚠️ No GitHub token\n• Rate limit: 60 requests/hour\n• Update frequency: Every 10 minutes\n\nRecommended: Click 🔑 to add a token for better performance';
+            
+            alert(status);
+        }
+        
+        function updateTokenIcon() {
+            const hasToken = !!localStorage.getItem('github-token');
+            const tokenIcon = document.getElementById('tokenIcon');
+            if (tokenIcon) {
+                tokenIcon.textContent = hasToken ? '✅' : '⚠️';
+                tokenIcon.parentElement.title = hasToken ? 
+                    'GitHub token active (5,000 req/hour, 2min updates)' : 
+                    'No GitHub token (60 req/hour, 10min updates)';
+            }
         }
 
         // Event listeners
@@ -2637,6 +3732,11 @@
             initializeTheme();
             initializeApp();
             handleHashNavigation();
+            
+            // Start real-time updates after app initialization
+            setTimeout(() => {
+                startRealtimeUpdates();
+            }, 5000); // Wait 5 seconds for app to fully load
         });
 
         // Handle browser back/forward buttons
