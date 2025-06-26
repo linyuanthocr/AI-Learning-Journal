@@ -2,7 +2,7 @@
 
 https://arxiv.org/abs/1812.01584
 
-![image.png](images/Aggregated%20Selective%20Match%20Kernels%20(ASMK)%2021c71bdab3cf80dfa08ed81f2119a8d8/image.png)
+![image.png](images/Aggregated%20Selective%20Match%20Kernels%20ASMK%2021c71bdab3cf80dfa08ed81f2119a8d8/image.png)
 
 ASMK (Aggregated Selective Match Kernel) is an advanced image retrieval algorithm that combines the best of two worlds:
 
@@ -48,7 +48,7 @@ The codebook is usually loaded from a .pkl file trained previously. It’s a vis
 
 **Each image has finally become a D-dim** feature, with sum(feature*attention), **weighted** **SPoC**  (Sum-pooled convolutional features )
 
-![image.png](images/Aggregated%20Selective%20Match%20Kernels%20(ASMK)%2021c71bdab3cf80dfa08ed81f2119a8d8/image%201.png)
+![image.png](images/Aggregated%20Selective%20Match%20Kernels%20ASMK%2021c71bdab3cf80dfa08ed81f2119a8d8/image%201.png)
 
 1. **Build Inverted File Index (IVF)**
 
@@ -160,7 +160,7 @@ class Retriever(object):
 
 Whitening:
 
-![image.png](images/Aggregated%20Selective%20Match%20Kernels%20(ASMK)%2021c71bdab3cf80dfa08ed81f2119a8d8/image%202.png)
+![image.png](images/Aggregated%20Selective%20Match%20Kernels%20ASMK%2021c71bdab3cf80dfa08ed81f2119a8d8/image%202.png)
 
 ```
 # from https://github.com/gtolias/how/blob/4d73c88e0ffb55506e2ce6249e2a015ef6ccf79f/how/utils/whitening.py#L20
