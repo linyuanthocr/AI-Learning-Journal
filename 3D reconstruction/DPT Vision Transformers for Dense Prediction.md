@@ -6,7 +6,7 @@ https://huggingface.co/docs/transformers/model_doc/dpt
 
 **Dense prediction transformers**， an architecture that leverages vision transformers in place of **convolutional networks as a backbone** for dense prediction tasks. We **assemble tokens** from **various stages** of the vision transformer into image-like representations at various resolutions and progressively combine them into **full-resolution predictions** using a **convolutional decoder**. 
 
-![image.png](images/DPT%EF%BC%9AVision%20Transformers%20for%20Dense%20Prediction%201ba71bdab3cf80f88a58f9790775a2fc/image.png)
+![image.png](images/DPT%20AVision%20Transformers%20for%20Dense%20Prediction%201ba71bdab3cf80f88a58f9790775a2fc/image.png)
 
 ## Transformer encoder
 
@@ -22,31 +22,31 @@ pitchsize 16*16
 
 three stage
 
-![image.png](images/DPT%EF%BC%9AVision%20Transformers%20for%20Dense%20Prediction%201ba71bdab3cf80f88a58f9790775a2fc/image%201.png)
+![image.png](images/DPT%20Vision%20Transformers%20for%20Dense%20Prediction%201ba71bdab3cf80f88a58f9790775a2fc/image%201.png)
 
 ### **Read**
 
-![image.png](images/DPT%EF%BC%9AVision%20Transformers%20for%20Dense%20Prediction%201ba71bdab3cf80f88a58f9790775a2fc/image%202.png)
+![image.png](images/DPT%20Vision%20Transformers%20for%20Dense%20Prediction%201ba71bdab3cf80f88a58f9790775a2fc/image%202.png)
 
 3 operations：
 
-![image.png](images/DPT%EF%BC%9AVision%20Transformers%20for%20Dense%20Prediction%201ba71bdab3cf80f88a58f9790775a2fc/image%203.png)
+![image.png](images/DPT%20Vision%20Transformers%20for%20Dense%20Prediction%201ba71bdab3cf80f88a58f9790775a2fc/image%203.png)
 
 ### **Concatenate**
 
 place each token acoording to the position of the initial patch in the image
 
-![image.png](images/DPT%EF%BC%9AVision%20Transformers%20for%20Dense%20Prediction%201ba71bdab3cf80f88a58f9790775a2fc/image%204.png)
+![image.png](images/DPT%20Vision%20Transformers%20for%20Dense%20Prediction%201ba71bdab3cf80f88a58f9790775a2fc/image%204.png)
 
 ### Resample
 
-![image.png](images/DPT%EF%BC%9AVision%20Transformers%20for%20Dense%20Prediction%201ba71bdab3cf80f88a58f9790775a2fc/image%205.png)
+![image.png](images/DPT%20Vision%20Transformers%20for%20Dense%20Prediction%201ba71bdab3cf80f88a58f9790775a2fc/image%205.png)
 
 we **reassemble features at four different stages** and four differ- ent resolutions. We
 
 combine the extracted feature maps from consecutive stages **using RefineNet-based feature fusion block,** progressively upsample the representation by a factor of two in each fusion stage.
 
-![image.png](images/DPT%EF%BC%9AVision%20Transformers%20for%20Dense%20Prediction%201ba71bdab3cf80f88a58f9790775a2fc/image%206.png)
+![image.png](images/DPT%20Vision%20Transformers%20for%20Dense%20Prediction%201ba71bdab3cf80f88a58f9790775a2fc/image%206.png)
 
 ### Handling varying image size
 
@@ -64,23 +64,23 @@ pos_emb_upsampled = interpolate(pos_emb_2d, size=(H_new, W_new), mode='bilinear'
 
 representations of depth are **unified into a common representation** and that common ambiguities (such as **scale ambiguity**) are appropriately handled in the **training loss** [30].
 
-![image.png](images/DPT%EF%BC%9AVision%20Transformers%20for%20Dense%20Prediction%201ba71bdab3cf80f88a58f9790775a2fc/image%207.png)
+![image.png](images/DPT%20Vision%20Transformers%20for%20Dense%20Prediction%201ba71bdab3cf80f88a58f9790775a2fc/image%207.png)
 
 a monocular depth prediction network using a **scale- and shift-invariant trimmed loss** that operates on an **inverse depth representation**, together with the **gradient-matching loss** proposed in [22].
 
 1. **scale- and shift-invariant trimmed loss【30】**
 
-![image.png](images/DPT%EF%BC%9AVision%20Transformers%20for%20Dense%20Prediction%201ba71bdab3cf80f88a58f9790775a2fc/image%208.png)
+![image.png](images/DPT%20Vision%20Transformers%20for%20Dense%20Prediction%201ba71bdab3cf80f88a58f9790775a2fc/image%208.png)
 
-![image.png](images/DPT%EF%BC%9AVision%20Transformers%20for%20Dense%20Prediction%201ba71bdab3cf80f88a58f9790775a2fc/image%209.png)
+![image.png](images/DPT%20Vision%20Transformers%20for%20Dense%20Prediction%201ba71bdab3cf80f88a58f9790775a2fc/image%209.png)
 
-![image.png](images/DPT%EF%BC%9AVision%20Transformers%20for%20Dense%20Prediction%201ba71bdab3cf80f88a58f9790775a2fc/image%2010.png)
+![image.png](images/DPT%20Vision%20Transformers%20for%20Dense%20Prediction%201ba71bdab3cf80f88a58f9790775a2fc/image%2010.png)
 
  **b.  gradient-matching loss**
 
 论文【30】的Lreg定义 （逆深度图）
 
-![image.png](images/DPT%EF%BC%9AVision%20Transformers%20for%20Dense%20Prediction%201ba71bdab3cf80f88a58f9790775a2fc/image%2011.png)
+![image.png](images/DPT%20Vision%20Transformers%20for%20Dense%20Prediction%201ba71bdab3cf80f88a58f9790775a2fc/image%2011.png)
 
 - loss code
     
