@@ -5,48 +5,7 @@
 MASt3R (Matching And Stereo 3D Reconstruction) introduces a novel sparse global alignment approach that efficiently optimizes multi-view 3D reconstruction. Unlike traditional dense methods that optimize millions of depth parameters, MASt3R uses an **anchor-based representation** that provides the same reconstruction quality with dramatically improved efficiency.
 
 ## Process Flowchart
-
-```mermaid
-flowchart TD
-    A[Input: Image Pairs] --> B[Pairwise Feature Matching]
-    B --> C[Extract Dense Correspondences]
-    C --> D[Quality Assessment]
-    
-    D --> E{High Quality Matches?}
-    E -->|Yes| F[Use for Geometric Optimization]
-    E -->|No| G[Mark for DUSt3R Fallback]
-    
-    F --> H[Multi-View Depth Fusion]
-    G --> H
-    H --> I[Canonical View Construction]
-    I --> J[Angular Averaging]
-    J --> K[Create Anchor Grid]
-    
-    K --> L[Feature-to-Anchor Assignment]
-    L --> M[Compute Depth Offsets]
-    M --> N[Build Kinematic Chain]
-    
-    N --> O[STAGE 1: Coarse Alignment]
-    O --> P[Optimize Camera Poses]
-    P --> Q[3D Point Matching Loss]
-    Q --> R{Converged?}
-    R -->|No| P
-    R -->|Yes| S[STAGE 2: Refinement]
-    
-    S --> T[Optimize Intrinsics & Fine Depths]
-    T --> U[2D Reprojection Loss]
-    U --> V{Converged?}
-    V -->|No| T
-    V -->|Yes| W[Final 3D Reconstruction]
-    
-    style A fill:#e1f5fe
-    style W fill:#c8e6c9
-    style O fill:#fff3e0
-    style S fill:#fce4ec
-    style E fill:#fff9c4
-    style R fill:#fff9c4
-    style V fill:#fff9c4
-```
+<img width="663" alt="image" src="https://github.com/user-attachments/assets/0d452934-3adf-4e8d-919e-511994fc5283" />
 
 ## Key Innovation: Anchor-Based Depth Representation
 
@@ -57,66 +16,6 @@ The core insight is to represent scene geometry using:
 
 This gives you **dense constraints with sparse parameterization**.
 
----
-
-## Detailed Component Flowchart
-
-```mermaid
-flowchart TD
-    subgraph "Input Processing"
-        A1[Image Pairs] --> A2[Forward MASt3R Model]
-        A2 --> A3[Dense Feature Descriptors]
-        A3 --> A4[Reciprocal NN Matching]
-        A4 --> A5[Correspondence Extraction]
-    end
-    
-    subgraph "Canonical View Creation"
-        B1[Multiple Depth Predictions<br/>per Image] --> B2[Confidence-Weighted<br/>Averaging]
-        B2 --> B3[Angular Space<br/>Processing]
-        B3 --> B4[Canonical 3D Pointmap<br/>+ Confidence Map]
-        B4 --> B5[Focal Length<br/>Estimation]
-    end
-    
-    subgraph "Anchor System Setup"
-        C1[Create Sparse Grid<br/>Every 8th Pixel] --> C2[Extract Anchor<br/>Depths]
-        C2 --> C3[Assign Features<br/>to Anchors]
-        C3 --> C4[Compute Relative<br/>Depth Offsets]
-        C4 --> C5[Build Kinematic<br/>Chain MST]
-    end
-    
-    subgraph "Stage 1: Coarse Optimization"
-        D1[Initialize Camera<br/>Poses & Anchor Depths] --> D2[Reconstruct 3D Points<br/>from Anchors]
-        D2 --> D3[3D Point Matching<br/>Loss Function]
-        D3 --> D4[Optimize Poses<br/>+ Anchor Depths]
-        D4 --> D5{Loss<br/>Converged?}
-        D5 -->|No| D2
-        D5 -->|Yes| D6[Coarse Result]
-    end
-    
-    subgraph "Stage 2: Refinement"
-        E1[Fine-tune Intrinsics<br/>+ Depth Details] --> E2[2D Reprojection<br/>Loss Function]
-        E2 --> E3[Pixel-Level<br/>Optimization]
-        E3 --> E4{Loss<br/>Converged?}
-        E4 -->|No| E1
-        E4 -->|Yes| E5[Final Result]
-    end
-    
-    subgraph "Fallback Strategy"
-        F1[Poor Quality<br/>Matches] --> F2[DUSt3R Regression<br/>Loss]
-        F2 --> F3[Original Depth<br/>Predictions as Targets]
-    end
-    
-    A5 --> B1
-    B5 --> C1
-    C5 --> D1
-    D6 --> E1
-    F3 --> D3
-    F3 --> E2
-    
-    style D6 fill:#fff3e0
-    style E5 fill:#c8e6c9
-    style F1 fill:#ffebee
-```
 
 ## Step 1: Feature Matching and Correspondence Extraction
 
