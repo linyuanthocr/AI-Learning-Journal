@@ -195,7 +195,7 @@ class ResidualConvUnit_custom(nn.Module):
 - Stability during training
 
 ## 📊 **Dimensional Analysis**
-![DPT_flowchart.png](images/dpt_network_graph.html)
+![DPT_flowchart.png](images/dust3r_dpthead.jpg)
 ```python
 # Example flow for 512×512 input image, patch_size=16
 Input: transformer features [B, 1024, C]  # 32×32 patches
