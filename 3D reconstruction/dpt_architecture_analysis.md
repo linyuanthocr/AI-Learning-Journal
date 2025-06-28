@@ -4,6 +4,8 @@
 DPT is a crucial component in DUSt3R that transforms multi-scale transformer features into dense pixel-wise predictions for 3D reconstruction. It bridges the gap between patch-based transformer representations and dense spatial outputs.
 
 ## 🏗️ **Architecture Components**
+![image.png](images/DPT%20Vision%20Transformers%20for%20Dense%20Prediction%201ba71bdab3cf80f88a58f9790775a2fc/image.png)
+
 
 ### 1. **Multi-Scale Feature Extraction**
 ```python
@@ -38,6 +40,8 @@ path_1 = self.scratch.refinenet1(path_2, layers[0])  # + Finest features
 - **Innovation**: Each stage upsamples and fuses features
 
 ### 4. **Dense Prediction Head**
+![image.png](images/DPT%20Vision%20Transformers%20for%20Dense%20Prediction%201ba71bdab3cf80f88a58f9790775a2fc/image%207.png)
+
 ```python
 # Regression head for 3D coordinates + confidence
 self.head = nn.Sequential(

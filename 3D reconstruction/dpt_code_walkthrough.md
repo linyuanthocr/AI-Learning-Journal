@@ -2,6 +2,9 @@
 
 ## Core Architecture Flow
 
+![image.png](images/DPT%20Vision%20Transformers%20for%20Dense%20Prediction%201ba71bdab3cf80f88a58f9790775a2fc/image.png)
+
+
 ### 1. **Multi-Scale Feature Extraction**
 
 ```python
@@ -69,9 +72,101 @@ self.act_4_postprocess = nn.Sequential(
 ```
 
 ### 4. **Progressive Feature Fusion**
+![image.png](images/DPT%20Vision%20Transformers%20for%20Dense%20Prediction%201ba71bdab3cf80f88a58f9790775a2fc/image%206.png)
+
+FusionBlock
+```python
+
+class FeatureFusionBlock_custom(nn.Module):
+    """Feature fusion block."""
+
+    def __init__(
+        self,
+        features,
+        activation,
+        deconv=False,
+        bn=False,
+        expand=False,
+        align_corners=True,
+        width_ratio=1,
+    ):
+        """Init.
+        Args:
+            features (int): number of features
+        """
+        super(FeatureFusionBlock_custom, self).__init__()
+        self.width_ratio = width_ratio
+
+        self.deconv = deconv
+        self.align_corners = align_corners
+
+        self.groups = 1
+
+        self.expand = expand
+        out_features = features
+        if self.expand == True:
+            out_features = features // 2
+
+        self.out_conv = nn.Conv2d(
+            features,
+            out_features,
+            kernel_size=1,
+            stride=1,
+            padding=0,
+            bias=True,
+            groups=1,
+        )
+
+        self.resConfUnit1 = ResidualConvUnit_custom(features, activation, bn)
+        self.resConfUnit2 = ResidualConvUnit_custom(features, activation, bn)
+
+        self.skip_add = nn.quantized.FloatFunctional()
+
+    def forward(self, *xs):
+        """Forward pass.
+        Returns:
+            tensor: output
+        """
+        output = xs[0]
+
+        if len(xs) == 2:
+            res = self.resConfUnit1(xs[1])
+            if self.width_ratio != 1:
+                res = F.interpolate(res, size=(output.shape[2], output.shape[3]), mode='bilinear')
+
+            output = self.skip_add.add(output, res)
+            # output += res
+
+        output = self.resConfUnit2(output)
+
+        if self.width_ratio != 1:
+            # and output.shape[3] < self.width_ratio * output.shape[2]
+            #size=(image.shape[])
+            if (output.shape[3] / output.shape[2]) < (2 / 3) * self.width_ratio:
+                shape = 3 * output.shape[3]
+            else:
+                shape = int(self.width_ratio * 2 * output.shape[2])
+            output  = F.interpolate(output, size=(2* output.shape[2], shape), mode='bilinear')
+        else:
+            output = nn.functional.interpolate(output, scale_factor=2,
+                    mode="bilinear", align_corners=self.align_corners)
+        output = self.out_conv(output)
+        return output
+
+def make_fusion_block(features, use_bn, width_ratio=1):
+    return FeatureFusionBlock_custom(
+        features,
+        nn.ReLU(False),
+        deconv=False,
+        bn=use_bn,
+        expand=False,
+        align_corners=True,
+        width_ratio=width_ratio,
+    )
+```
 
 ```python
-# Bottom-up refinement with skip connections
+# Bottom-up refinement (fushion block) with skip connections
 path_4 = self.scratch.refinenet4(layers[3])  # Start with coarsest features
 path_3 = self.scratch.refinenet3(path_4, layers[2])  # Fuse with layer 2
 path_2 = self.scratch.refinenet2(path_3, layers[1])  # Fuse with layer 1  
@@ -79,6 +174,7 @@ path_1 = self.scratch.refinenet1(path_2, layers[0])  # Fuse with finest layer
 ```
 
 **Feature Fusion Block Details**:
+
 ```python
 class FeatureFusionBlock_custom(nn.Module):
     def forward(self, *xs):
@@ -100,6 +196,8 @@ class FeatureFusionBlock_custom(nn.Module):
 ```
 
 ### 5. **Dense Prediction Head**
+![image.png](images/DPT%20Vision%20Transformers%20for%20Dense%20Prediction%201ba71bdab3cf80f88a58f9790775a2fc/image%207.png)
+
 
 ```python
 # Regression head for 3D coordinates + confidence
