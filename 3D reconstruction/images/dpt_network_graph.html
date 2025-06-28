@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DPT Network Architecture</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .network-graph {
+            width: 100%;
+            height: 1000px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            background: #fafafa;
+        }
+        .box {
+            stroke: #333;
+            stroke-width: 2;
+            rx: 8;
+            ry: 8;
+        }
+        
+        /* Color scheme for different components */
+        .input-layer { fill: #e3f2fd; }
+        .hook-layer { fill: #f3e5f5; }
+        .reshape-layer { fill: #e8f5e8; }
+        .project-layer { fill: #fff3e0; }
+        .fusion-layer { fill: #ffebee; }
+        .head-layer { fill: #fce4ec; }
+        .output-layer { fill: #f0f4c3; }
+        
+        .text {
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            text-anchor: middle;
+            dominant-baseline: middle;
+            fill: #333;
+        }
+        .title-text {
+            font-size: 16px;
+            font-weight: bold;
+        }
+        .small-text {
+            font-size: 12px;
+        }
+        .arrow {
+            stroke: #333;
+            stroke-width: 2;
+            fill: none;
+            marker-end: url(#arrowhead);
+        }
+        .thick-arrow {
+            stroke: #333;
+            stroke-width: 3;
+            fill: none;
+            marker-end: url(#arrowhead);
+        }
+        
+        .legend {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 8px;
+        }
+        .legend-item {
+            display: inline-block;
+            margin-right: 25px;
+            margin-bottom: 10px;
+        }
+        .legend-color {
+            display: inline-block;
+            width: 20px;
+            height: 15px;
+            margin-right: 8px;
+            border-radius: 3px;
+            vertical-align: middle;
+        }
+        
+        .info-box {
+            margin-top: 20px;
+            padding: 20px;
+            background: #e8f4fd;
+            border-radius: 8px;
+            border-left: 5px solid #2196F3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>DPT Network Architecture Flow</h1>
+        
+        <svg class="network-graph" viewBox="0 0 1300 900">
+            <!-- Arrow marker definition -->
+            <defs>
+                <marker id="arrowhead" markerWidth="12" markerHeight="10" 
+                 refX="12" refY="5" orient="auto">
+                    <polygon points="0 0, 12 5, 0 10" fill="#333" />
+                </marker>
+            </defs>
+            
+            <!-- Input: Multi-scale Transformer Features - moved higher -->
+            <rect class="box input-layer" x="500" y="20" width="200" height="60"/>
+            <text class="text title-text" x="600" y="45">Transformer Decoder</text>
+            <text class="text small-text" x="600" y="65">Multi-scale Features</text>
+            
+            <!-- Hook Selection -->
+            <rect class="box hook-layer" x="150" y="140" width="120" height="70"/>
+            <text class="text title-text" x="210" y="165">Layer 0</text>
+            <text class="text small-text" x="210" y="180">(Finest)</text>
+            <text class="text small-text" x="210" y="195">768×H/16×W/16</text>
+            
+            <rect class="box hook-layer" x="320" y="140" width="120" height="70"/>
+            <text class="text title-text" x="380" y="165">Layer l2*2/4</text>
+            <text class="text small-text" x="380" y="180">(Mid-fine)</text>
+            <text class="text small-text" x="380" y="195">512×H/16×W/16</text>
+            
+            <rect class="box hook-layer" x="760" y="140" width="120" height="70"/>
+            <text class="text title-text" x="820" y="165">Layer l2*3/4</text>
+            <text class="text small-text" x="820" y="180">(Mid-coarse)</text>
+            <text class="text small-text" x="820" y="195">512×H/16×W/16</text>
+            
+            <rect class="box hook-layer" x="930" y="140" width="120" height="70"/>
+            <text class="text title-text" x="990" y="165">Layer l2</text>
+            <text class="text small-text" x="990" y="180">(Coarsest)</text>
+            <text class="text small-text" x="990" y="195">512×H/16×W/16</text>
+            
+            <!-- Reshape to Spatial -->
+            <rect class="box reshape-layer" x="150" y="250" width="120" height="50"/>
+            <text class="text title-text" x="210" y="270">Reshape</text>
+            <text class="text small-text" x="210" y="285">to 2D spatial</text>
+            
+            <rect class="box reshape-layer" x="320" y="250" width="120" height="50"/>
+            <text class="text title-text" x="380" y="270">Reshape</text>
+            <text class="text small-text" x="380" y="285">to 2D spatial</text>
+            
+            <rect class="box reshape-layer" x="760" y="250" width="120" height="50"/>
+            <text class="text title-text" x="820" y="270">Reshape</text>
+            <text class="text small-text" x="820" y="285">to 2D spatial</text>
+            
+            <rect class="box reshape-layer" x="930" y="250" width="120" height="50"/>
+            <text class="text title-text" x="990" y="270">Reshape</text>
+            <text class="text small-text" x="990" y="285">to 2D spatial</text>
+            
+            <!-- Feature Projection -->
+            <rect class="box project-layer" x="150" y="340" width="120" height="80"/>
+            <text class="text title-text" x="210" y="365">Project</text>
+            <text class="text small-text" x="210" y="380">Conv + Upsample</text>
+            <text class="text small-text" x="210" y="400">→ 96×H/4×W/4</text>
+            
+            <rect class="box project-layer" x="320" y="340" width="120" height="80"/>
+            <text class="text title-text" x="380" y="365">Project</text>
+            <text class="text small-text" x="380" y="380">Conv + Upsample</text>
+            <text class="text small-text" x="380" y="400">→ 192×H/8×W/8</text>
+            
+            <rect class="box project-layer" x="760" y="340" width="120" height="80"/>
+            <text class="text title-text" x="820" y="365">Project</text>
+            <text class="text small-text" x="820" y="380">Conv</text>
+            <text class="text small-text" x="820" y="400">→ 384×H/16×W/16</text>
+            
+            <rect class="box project-layer" x="930" y="340" width="120" height="80"/>
+            <text class="text title-text" x="990" y="365">Project</text>
+            <text class="text small-text" x="990" y="380">Conv + Downsample</text>
+            <text class="text small-text" x="990" y="400">→ 768×H/32×W/32</text>
+            
+            <!-- Feature Standardization -->
+            <rect class="box project-layer" x="150" y="460" width="120" height="50"/>
+            <text class="text title-text" x="210" y="480">Conv 3×3</text>
+            <text class="text small-text" x="210" y="495">→ 256 channels</text>
+            
+            <rect class="box project-layer" x="320" y="460" width="120" height="50"/>
+            <text class="text title-text" x="380" y="480">Conv 3×3</text>
+            <text class="text small-text" x="380" y="495">→ 256 channels</text>
+            
+            <rect class="box project-layer" x="760" y="460" width="120" height="50"/>
+            <text class="text title-text" x="820" y="480">Conv 3×3</text>
+            <text class="text small-text" x="820" y="495">→ 256 channels</text>
+            
+            <rect class="box project-layer" x="930" y="460" width="120" height="50"/>
+            <text class="text title-text" x="990" y="480">Conv 3×3</text>
+            <text class="text small-text" x="990" y="495">→ 256 channels</text>
+            
+            <!-- Feature Fusion Network - RefineNet 1,2,3,4 from left to right -->
+            <rect class="box fusion-layer" x="150" y="560" width="120" height="70"/>
+            <text class="text title-text" x="210" y="585">RefineNet 1</text>
+            <text class="text small-text" x="210" y="600">Fusion + Residual</text>
+            <text class="text small-text" x="210" y="615">+ 2× Upsample</text>
+            
+            <rect class="box fusion-layer" x="320" y="560" width="120" height="70"/>
+            <text class="text title-text" x="380" y="585">RefineNet 2</text>
+            <text class="text small-text" x="380" y="600">Fusion + Residual</text>
+            <text class="text small-text" x="380" y="615">+ 2× Upsample</text>
+            
+            <rect class="box fusion-layer" x="760" y="560" width="120" height="70"/>
+            <text class="text title-text" x="820" y="585">RefineNet 3</text>
+            <text class="text small-text" x="820" y="600">Fusion + Residual</text>
+            <text class="text small-text" x="820" y="615">+ 2× Upsample</text>
+            
+            <rect class="box fusion-layer" x="930" y="560" width="120" height="70"/>
+            <text class="text title-text" x="990" y="585">RefineNet 4</text>
+            <text class="text small-text" x="990" y="600">Residual Conv</text>
+            <text class="text small-text" x="990" y="615">+ 2× Upsample</text>
+            
+            <!-- Final Prediction Head -->
+            <rect class="box head-layer" x="400" y="700" width="180" height="100"/>
+            <text class="text title-text" x="490" y="730">Prediction Head</text>
+            <text class="text small-text" x="490" y="745">Conv 256→128 (3×3)</text>
+            <text class="text small-text" x="490" y="760">Upsample 2×</text>
+            <text class="text small-text" x="490" y="775">Conv 128→32 (3×3)</text>
+            <text class="text small-text" x="490" y="790">Conv 32→(3+conf) (1×1)</text>
+            
+            <!-- Final Output -->
+            <rect class="box output-layer" x="650" y="730" width="140" height="60"/>
+            <text class="text title-text" x="720" y="755">Dense Output</text>
+            <text class="text small-text" x="720" y="770">3D coordinates</text>
+            <text class="text small-text" x="720" y="785">+ confidence</text>
+            
+            <!-- Arrows showing data flow - edge to edge, no crossing blocks -->
+            
+            <!-- From input to hooks - updated with more clearance -->
+            <line class="arrow" x1="600" y1="80" x2="600" y2="110"/>
+            <line class="arrow" x1="600" y1="110" x2="210" y2="110"/>
+            <line class="arrow" x1="210" y1="110" x2="210" y2="140"/>
+            
+            <line class="arrow" x1="600" y1="110" x2="380" y2="110"/>
+            <line class="arrow" x1="380" y1="110" x2="380" y2="140"/>
+            
+            <line class="arrow" x1="600" y1="110" x2="820" y2="110"/>
+            <line class="arrow" x1="820" y1="110" x2="820" y2="140"/>
+            
+            <line class="arrow" x1="600" y1="110" x2="990" y2="110"/>
+            <line class="arrow" x1="990" y1="110" x2="990" y2="140"/>
+            
+            <!-- From hooks to reshape - edge to edge -->
+            <line class="arrow" x1="210" y1="210" x2="210" y2="250"/>
+            <line class="arrow" x1="380" y1="210" x2="380" y2="250"/>
+            <line class="arrow" x1="820" y1="210" x2="820" y2="250"/>
+            <line class="arrow" x1="990" y1="210" x2="990" y2="250"/>
+            
+            <!-- From reshape to project - edge to edge -->
+            <line class="arrow" x1="210" y1="300" x2="210" y2="340"/>
+            <line class="arrow" x1="380" y1="300" x2="380" y2="340"/>
+            <line class="arrow" x1="820" y1="300" x2="820" y2="340"/>
+            <line class="arrow" x1="990" y1="300" x2="990" y2="340"/>
+            
+            <!-- From project to standardize - edge to edge -->
+            <line class="arrow" x1="210" y1="420" x2="210" y2="460"/>
+            <line class="arrow" x1="380" y1="420" x2="380" y2="460"/>
+            <line class="arrow" x1="820" y1="420" x2="820" y2="460"/>
+            <line class="arrow" x1="990" y1="420" x2="990" y2="460"/>
+            
+            <!-- From standardized features to fusion - simplified edge to edge routing -->
+            <!-- Layer 0 to RefineNet1 -->
+            <line class="arrow" x1="210" y1="510" x2="210" y2="560"/>
+            
+            <!-- Layer 1 to RefineNet2 -->
+            <line class="arrow" x1="380" y1="510" x2="380" y2="560"/>
+            
+            <!-- Layer 2 to RefineNet3 - straight line -->
+            <line class="arrow" x1="820" y1="510" x2="820" y2="560"/>
+            
+            <!-- Layer 3 to RefineNet4 - straight line -->
+            <line class="arrow" x1="990" y1="510" x2="990" y2="560"/>
+            
+            <!-- Between fusion blocks - flow: 4→3→2→1 (right to left) -->
+            <line class="thick-arrow" x1="930" y1="595" x2="880" y2="595"/>
+            <line class="thick-arrow" x1="760" y1="595" x2="440" y2="595"/>
+            <line class="thick-arrow" x1="320" y1="595" x2="270" y2="595"/>
+            
+            <!-- From final fusion (RefineNet1) to head - two orthogonal lines -->
+            <line class="thick-arrow" x1="210" y1="630" x2="210" y2="750"/>
+            <line class="thick-arrow" x1="210" y1="750" x2="400" y2="750"/>
+            
+            <!-- From head to output -->
+            <line class="thick-arrow" x1="580" y1="750" x2="650" y2="760"/>
+            
+            <!-- Labels for data flow -->
+            <text class="text small-text" style="font-style: italic;" x="100" y="545">+ Layer 0 (finest)</text>
+            <text class="text small-text" style="font-style: italic;" x="290" y="545">+ Layer 1</text>
+            <text class="text small-text" style="font-style: italic;" x="620" y="535">+ Layer 2</text>
+            <text class="text small-text" style="font-style: italic;" x="1100" y="530">Layer 3 (coarsest)</text>
+            
+            <text class="text small-text" style="font-style: italic;" x="300" y="670">256×H/2×W/2</text>
+            <text class="text small-text" style="font-style: italic;" x="600" y="710">(3+conf)×H×W</text>
+            
+        </svg>
+        
+        <div class="legend">
+            <h3>Legend:</h3>
+            <div class="legend-item">
+                <span class="legend-color" style="background: #e3f2fd;"></span>
+                Input Features
+            </div>
+            <div class="legend-item">
+                <span class="legend-color" style="background: #f3e5f5;"></span>
+                Multi-scale Hooks
+            </div>
+            <div class="legend-item">
+                <span class="legend-color" style="background: #e8f5e8;"></span>
+                Spatial Reshape
+            </div>
+            <div class="legend-item">
+                <span class="legend-color" style="background: #fff3e0;"></span>
+                Feature Projection
+            </div>
+            <div class="legend-item">
+                <span class="legend-color" style="background: #ffebee;"></span>
+                Feature Fusion
+            </div>
+            <div class="legend-item">
+                <span class="legend-color" style="background: #fce4ec;"></span>
+                Prediction Head
+            </div>
+            <div class="legend-item">
+                <span class="legend-color" style="background: #f0f4c3;"></span>
+                Final Output
+            </div>
+        </div>
+        
+        <div class="info-box">
+            <h3>🔄 DPT Data Flow Summary:</h3>
+            <ol>
+                <li><strong>Multi-Scale Extraction:</strong> Hook into 4 transformer decoder layers at different depths</li>
+                <li><strong>Spatial Conversion:</strong> Reshape sequence tokens back to 2D spatial representation</li>
+                <li><strong>Feature Alignment:</strong> Project all scales to different intermediate dimensions with appropriate up/downsampling</li>
+                <li><strong>Standardization:</strong> Convert all features to common 256-channel representation</li>
+                <li><strong>Progressive Fusion:</strong> Hierarchically fuse features from coarse to fine with skip connections</li>
+                <li><strong>Dense Prediction:</strong> Generate pixel-wise 3D coordinates and confidence maps</li>
+            </ol>
+            <p><strong>Key Innovation:</strong> The progressive fusion strategy preserves both global context (from deeper layers) and fine details (from shallow layers) for robust 3D reconstruction.</p>
+        </div>
+    </div>
+</body>
+</html>
