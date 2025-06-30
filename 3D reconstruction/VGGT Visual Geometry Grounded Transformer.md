@@ -109,6 +109,78 @@ Head part is like:
 
 **Key Insight:** Unlike [129], we do not apply such normalization to the predictions output by the transformer; instead, we force it to learn the normalization from the training data
 
+## Experiments Summary
+
+**Camera Pose Estimation (4.1):**
+
+- VGGT achieves superior performance while only operating in a feed-forward manner, requiring just 0.2 seconds vs 10+ seconds for competitors
+- Outperforms all methods including those with expensive post-processing
+
+**Multi-view Depth (4.2):**
+
+- Substantially outperforms DUSt3R, reducing the Overall score from 1.741 to 0.382
+- Achieves results comparable to methods that know ground-truth cameras at test time
+
+**Point Map Estimation (4.3):**
+
+- Outperforms them significantly in a simple feed-forward regime at only 0.2 seconds per reconstruction vs 10 seconds for DUSt3R/MASt3R
+- **Key Finding:** Predictions from our depth and camera heads yield higher accuracy than direct point map prediction
+
+**Image Matching (4.4):**
+
+- Despite not being explicitly trained for two-view matching, VGGT achieves the highest accuracy among all baselines
+
+**Ablations (4.5)**
+
+- **Architecture:** Alternating-Attention architecture outperforms both baseline variants by a clear margin
+- **Multi-task Learning:** Incorporating camera parameter estimation clearly enhances point map accuracy
+
+**Downstream Tasks (4.6)**
+
+- **Novel View Synthesis:** Despite not requiring the input camera parameters and using less training data than LVSM, our model achieves competitive results
+- **Dynamic Point Tracking:** VGGT's tracking features improve the δ^vis_avg metric from 78.9 to 84.0 on the TAP-Vid RGB-S dataset
+
+**Main Takeaways**
+
+1. **50x faster** than optimization methods with better accuracy
+2. **Multi-task training** improves all individual tasks
+3. **Strong generalization** to unseen data and downstream applications
+4. **Decomposed prediction** (depth + camera) works better than direct outputs
+
+## Discussion
+
+### Limitations
+
+- The current model does not support fisheye or panoramic images
+- Reconstruction performance drops under conditions involving extreme input rotations
+- It fails in scenarios involving substantial non-rigid deformation
+
+**But:** Addressing these limitations can be straightforwardly achieved by fine-tuning the model on targeted datasets with minimal architectural modifications
+
+### Runtime & Memory
+
+- Users constrained by GPU resources may perform predictions frame by frame
+- Savings or accelerations can be achieved by employing techniques used in large language model (LLM) deployments
+
+### Design Insights
+
+**DINOv2 vs Custom Patchifying:** DINOv2 model provides better performance; moreover, it ensures much more stable training
+
+**Single Image Support:** Unlike systems like DUSt3R and MASt3R that have to duplicate an image to create a pair, our model architecture inherently supports the input of a single image
+
+**Training Speed:** Enabling differentiable BA in PyTorch using Theseus typically makes each training step roughly 4 times slower
+
+### Key Takeaways
+
+1. **Easy adaptation** through fine-tuning vs architectural changes
+2. **Flexible deployment** - can trade memory for computation
+3. **Training stability** from using pretrained components
+4. **Natural single-image support** advantage
+
+## Training Details
+
+![image.png](images/VGGT%20Visual%20Geometry%20Grounded%20Transformer%201ba71bdab3cf80c88bf9eee2a0d5313f/image16.png)
+
 ## Reference
 
 [**DUSt3R: Geometric 3D Vision Made Easy**](https://www.notion.so/DUSt3R-Geometric-3D-Vision-Made-Easy-1ba71bdab3cf80a08e7afbedcb4a1605?pvs=21)
