@@ -73,6 +73,42 @@ Head part is like:
 
 **DPT head is the fusion+head part of the original DPT, only add different layers output+upsample+conv (no ressamples module from original DPT)**
 
+### How the Tracking Head Works
+
+**Dense Feature Generation:**
+
+- The output image tokens  $t̂^I_i$ are used to predict the dense outputs, i.e., the depth maps Di, point maps Pi, and tracking features Ti
+- $t̂^I_i$ are first converted to dense feature maps $Fi ∈ R^(C''×H×W)$ with a DPT layer
+- The DPT head also outputs dense features $Ti ∈ R^(C×H×W)$, which serve as input to the tracking head
+
+**Tracking Module Architecture:**
+
+- We use the **CoTracker2** architecture, which takes the dense tracking features Ti as input
+- Given a query point yj in a query image Iq (during training, we always set q = 1, but any other image can be potentially used as a query), the tracking head T predicts the set of 2D points $T((yj)^M_{j=1}, (Ti)^N_{i=1}) = ((ŷj,i)^N_{i=1})^M_{j=1}$
+
+**Feature Correlation Process:**
+
+1. The feature map Tq of the query image is first bilinearly sampled at the query point yj to obtain its feature
+2. This feature is then correlated with all other feature maps Ti, i ≠ q to obtain a set of correlation maps
+3. These maps are then processed by self-attention layers to predict the final 2D points ŷi, which are all in correspondence with yj
+
+**Key Design Choice:**
+
+- Similar to VGGSfM, our tracker does not assume any temporal ordering of the input frames and, hence, can be applied to any set of input images, not just videos
+
+## Training (Section 3.4)
+![image.png](https://github.com/linyuanthocr/AI-Learning-Journal/blob/main/3D%20reconstruction/images/image.png)
+
+**Training Setup:**
+
+- 1.2 billion parameters total
+- AdamW optimizer for 160K iterations
+- Peak learning rate of 0.0002 with warmup of 8K iterations
+- Randomly sample 2–24 frames from a random training scene
+- Training runs on 64 A100 GPUs over nine days
+
+**Key Insight:** Unlike [129], we do not apply such normalization to the predictions output by the transformer; instead, we force it to learn the normalization from the training data
+
 ## Reference
 
 [**DUSt3R: Geometric 3D Vision Made Easy**](https://www.notion.so/DUSt3R-Geometric-3D-Vision-Made-Easy-1ba71bdab3cf80a08e7afbedcb4a1605?pvs=21)
