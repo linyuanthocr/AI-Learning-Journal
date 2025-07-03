@@ -15,20 +15,12 @@ viewer
 
 pip install -r requirements_demo.txt
 
-![image.png](images/runpod%20+%20colmap%201cb71bdab3cf80c186c9eb85c894e561/image.png)
-
-![image.png](images/runpod%20+%20colmap%201cb71bdab3cf80c186c9eb85c894e561/image%201.png)
-
-![image.png](images/runpod%20+%20colmap%201cb71bdab3cf80c186c9eb85c894e561/image%202.png)
-
-![image.png](images/runpod%20+%20colmap%201cb71bdab3cf80c186c9eb85c894e561/image%203.png)
-
-![image.png](images/runpod%20+%20colmap%201cb71bdab3cf80c186c9eb85c894e561/image%204.png)
-
-![image.png](images/runpod%20+%20colmap%201cb71bdab3cf80c186c9eb85c894e561/image%205.png)
-
-![image.png](images/runpod%20+%20colmap%201cb71bdab3cf80c186c9eb85c894e561/image%206.png)
-
-![image.png](images/runpod%20+%20colmap%201cb71bdab3cf80c186c9eb85c894e561/image%207.png)
-
-![image.png](images/runpod%20+%20colmap%201cb71bdab3cf80c186c9eb85c894e561/image%208.png)
+![image.png](images/runpod%20colmap%201cb71bdab3cf80c186c9eb85c894e561/image.png)
+![image.png](images/runpod%20colmap%201cb71bdab3cf80c186c9eb85c894e561/image%201.png)
+![image.png](images/runpod%20colmap%201cb71bdab3cf80c186c9eb85c894e561/image%202.png)
+![image.png](images/runpod%20colmap%201cb71bdab3cf80c186c9eb85c894e561/image%203.png)
+![image.png](images/runpod%20colmap%201cb71bdab3cf80c186c9eb85c894e561/image%204.png)
+![image.png](images/runpod%20colmap%201cb71bdab3cf80c186c9eb85c894e561/image%205.png)
+![image.png](images/runpod%20colmap%201cb71bdab3cf80c186c9eb85c894e561/image%206.png)
+![image.png](images/runpod%20colmap%201cb71bdab3cf80c186c9eb85c894e561/image%207.png)
+![image.png](images/runpod%20colmap%201cb71bdab3cf80c186c9eb85c894e561/image%208.png)
