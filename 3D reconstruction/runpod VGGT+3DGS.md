@@ -1,8 +1,8 @@
-# runpod + VGGT
+# runpod + VGGT + 3DGS
 
 https://colmap.github.io/install.html
 
-# Setup Conda
+## Setup Conda
 
 ```bash
 #!/bin/bash
@@ -28,7 +28,7 @@ echo "🧪 创建 Python 3.11 环境: vggt"
 source /workspace/miniconda3/bin/activate vggt
 ```
 
-# Install VGGT
+## Install VGGT
 
 ```bash
 #!/bin/bash
@@ -73,7 +73,7 @@ echo "✅ 所有安装完成！"
 ![image.png](images/runpod%20colmap%201cb71bdab3cf80c186c9eb85c894e561/image%208.png)
 
 
-# VGGT+gsplat
+## VGGT+gsplat
 
 ### VGGT to colmap
 
@@ -103,7 +103,7 @@ SCENE_DIR/
 ```
 https://github.com/nerfstudio-project/gsplat
 
-### runpod gsplat for VGGT results:
+## runpod 3DGS for VGGT results:
 
 ```bash
 conda create -n gsplat
