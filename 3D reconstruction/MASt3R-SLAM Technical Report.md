@@ -1,8 +1,9 @@
 # MASt3R-SLAM Technical Report
 
-[MASt3R-SLAM paper](https://arxiv.org/abs/2412.12392)
-
 [MASt3R-SLAM project](https://edexheim.github.io/mast3r-slam/)
+
+[paper](https://arxiv.org/abs/2412.12392)
+
 
 ## Executive Summary
 
