@@ -1,10 +1,10 @@
 # ASMK Summary (Formulas)
 
-![image.png](images/ASMK%20Summary%20(Formulas)%2022c71bdab3cf80349911da4922bb3050/image.png)
+![image.png](images/ASMKSummarywithFormulas/image.png)
 
-![image.png](images/ASMK%20Summary%20(Formulas)%2022c71bdab3cf80349911da4922bb3050/image%201.png)
+![image.png](images/ASMKSummarywithFormulas/image%201.png)
 
-![image.png](images/ASMK%20Summary%20(Formulas)%2022c71bdab3cf80349911da4922bb3050/image%202.png)
+![image.png](images/ASMKSummarywithFormulas/image%202.png)
 
 ---
 
@@ -33,13 +33,13 @@ Instead of comparing descriptors between all image pairs, the inverted index let
 
 ## **🗂 Structure of the Inverted Index**
 
-![image.png](images/ASMK%20Summary%20(Formulas)%2022c71bdab3cf80349911da4922bb3050/image%203.png)
+![image.png](images/ASMKSummarywithFormulas/image%203.png)
 
 ---
 
 ## **🔍 Retrieval Process Using the Inverted Index**
 
-![image.png](images/ASMK%20Summary%20(Formulas)%2022c71bdab3cf80349911da4922bb3050/image%204.png)
+![image.png](images/ASMKSummarywithFormulas/image%204.png)
 
 ---
 
