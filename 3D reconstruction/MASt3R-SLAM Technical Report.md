@@ -2,7 +2,7 @@
 
 [MASt3R-SLAM project](https://edexheim.github.io/mast3r-slam/)
 
-[paper](https://arxiv.org/abs/2412.12392)
+[paper](https://arxiv.org/pdf/2412.12392)
 
 
 ## Executive Summary
