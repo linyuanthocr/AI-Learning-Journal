@@ -260,7 +260,165 @@ CIoU helps **faster convergence and better accuracy**, especially in tightly-loc
 - **Five scaled versions** (n, s, m, l, x) for different use cases
 - **SPPF layer** for accelerated spatial pyramid pooling
 - Achieved 50.7% AP (YOLOv5x) on COCO
+- Anchor Free
+    - **Each location (grid cell) directly predicts distances**:
+        - From an **anchor point** (like the center of the cell) to the four sides of the bounding box (top, left, bottom, right).
+        - Using a **DFL** (Distribution Focal Loss) over each distance.
+    - **No predefined box sizes or aspect ratios**.
+        - Only use a **grid of points** (anchor points), not shaped boxes.
+    - **Dynamic label assignment**:
+        - During training, each point is matched to GT boxes based on its **proximity and prediction confidence**, not by IoU with an anchor box.
 
 ![image.png](images/YOLO%20Review%2022871bdab3cf80ec8592d2939069e941/image%2013.png)
 
-### to be continued
+```python
+class SPPF(nn.Module):
+    # Spatial Pyramid Pooling - Fast (SPPF) layer for YOLOv5 by Glenn Jocher
+    def __init__(self, c1, c2, k=5):  # equivalent to SPP(k=(5, 9, 13))
+        super().__init__()
+        c_ = c1 // 2  # hidden channels
+        self.cv1 = Conv(c1, c_, 1, 1)
+        self.cv2 = Conv(c_ * 4, c2, 1, 1)
+        self.m = nn.MaxPool2d(kernel_size=k, stride=1, padding=k // 2)
+
+    def forward(self, x):
+        x = self.cv1(x)
+        y1 = self.m(x)
+        y2 = self.m(y1)
+        return self.cv2(torch.cat([x, y1, y2, self.m(y2)], 1))
+```
+
+# **YOLOX (2021)**
+
+- **Anchor-free architecture** returning to original YOLO philosophy
+- **Decoupled head** separating classification and regression
+- **Advanced label assignment** with simOTA
+- **Strong augmentations** eliminating need for ImageNet pretraining
+- Achieved 51.2% AP on COCO
+
+# **YOLOv7 (2022)**
+
+- **E-ELAN architecture** for efficient layer aggregation
+- **Planned re-parameterized convolution** without identity connections
+- **Model scaling strategy** for concatenation-based architectures
+- **Auxiliary and lead head** training approach
+- Achieved 56.8% AP on COCO (YOLOv7-E6)
+
+# **YOLOv8 (2023)**
+
+- **C2f modules** replacing CSP layers
+- **Anchor-free with decoupled head** design
+- **Multiple task support** (detection, segmentation, pose estimation)
+- **CLI and pip package** integration
+- Achieved 53.9% AP (YOLOv8x) on COCO
+
+YOLOv8 uses a similar backbone as YOLOv5 with some changes on the CSPLayer, now called the **C2f module**. The C2f module (**cross-stage partial bottleneck with two convolutions**) combines high-level features with contextual information to improve detection accuracy
+
+![image.png](images/YOLO%20Review%2022871bdab3cf80ec8592d2939069e941/image%2014.png)
+
+- Distribution Focal Loss
+    
+    In **YOLOv8**, the **DFL (Distribution Focal Loss)** is used to improve bounding box regression by **predicting a distribution over discrete bins** for each box coordinate instead of directly regressing the continuous value. This technique helps the model learn more precise localization.
+    
+    ---
+    
+    ### 🧠 What is DFL (Distribution Focal Loss)?
+    
+    Instead of directly regressing box coordinates like `[x, y, w, h]`, YOLOv8 **discretizes** each coordinate into bins (e.g., `reg_max = 16`, meaning 17 bins from 0 to 16). Then, it:
+    
+    1. **Predicts a discrete probability distribution** over these bins for each coordinate.
+    2. **Applies softmax** to get probabilities.
+    3. **Takes the expectation (weighted average)** to obtain the final continuous prediction.
+    4. Applies **Distribution Focal Loss** to supervise this distribution.
+    
+    ---
+    
+    ### 📐 Coordinate Regression Process
+    
+    - Each bounding box coordinate (like `tx`, `ty`, `tw`, `th`) is predicted as a **discrete distribution** of length `reg_max + 1` (e.g., 17).
+    - The model outputs this as part of its regression head:
+        
+        ```
+        reg_output.shape = [H, W, 4 * (reg_max + 1)]  # for 4 sides of the box
+        
+        ```
+        
+    - During training:
+        - The **true continuous target** is quantized.
+        - The **DFL loss** is computed between the predicted distribution and the quantized ground truth using a focal-style weighting.
+    
+    ---
+    
+    ### 🔧 YOLOv8 DFL Loss Equation
+    
+    Given predicted logits `p = [p_0, p_1, ..., p_16]` and the ground truth bin `t`, the loss is:
+    
+    DFL(p,t)=FocalLoss(p,t)\text{DFL}(p, t) = \text{FocalLoss}(p, t)
+    
+    Usually implemented as a **cross-entropy loss**, optionally with focal weights to emphasize harder samples (bins closer to the target value).
+    
+    ---
+    
+    ### ✅ Advantages
+    
+    - Improves localization accuracy, especially for small objects or crowded scenes.
+    - Makes the regression task more stable and precise.
+    
+    ---
+    
+    ```python
+    class DFLoss(nn.Module):
+        """Criterion class for computing Distribution Focal Loss (DFL)."""
+    
+        def __init__(self, reg_max: int = 16) -> None:
+            """Initialize the DFL module with regularization maximum."""
+            super().__init__()
+            self.reg_max = reg_max
+    
+        def __call__(self, pred_dist: torch.Tensor, target: torch.Tensor) -> torch.Tensor:
+            """Return sum of left and right DFL losses from https://ieeexplore.ieee.org/document/9792391."""
+            target = target.clamp_(0, self.reg_max - 1 - 0.01)
+            tl = target.long()  # target left
+            tr = tl + 1  # target right
+            wl = tr - target  # weight left
+            wr = 1 - wl  # weight right
+            return (
+                F.cross_entropy(pred_dist, tl.view(-1), reduction="none").view(tl.shape) * wl
+                + F.cross_entropy(pred_dist, tr.view(-1), reduction="none").view(tl.shape) * wr
+            ).mean(-1, keepdim=True)
+    ```
+    
+    ```python
+    class BboxLoss(nn.Module):
+        """Criterion class for computing training losses for bounding boxes."""
+    
+        def __init__(self, reg_max: int = 16):
+            """Initialize the BboxLoss module with regularization maximum and DFL settings."""
+            super().__init__()
+            self.dfl_loss = DFLoss(reg_max) if reg_max > 1 else None
+    
+        def forward(
+            self,
+            pred_dist: torch.Tensor,
+            pred_bboxes: torch.Tensor,
+            anchor_points: torch.Tensor,
+            target_bboxes: torch.Tensor,
+            target_scores: torch.Tensor,
+            target_scores_sum: torch.Tensor,
+            fg_mask: torch.Tensor,
+        ) -> Tuple[torch.Tensor, torch.Tensor]:
+            """Compute IoU and DFL losses for bounding boxes."""
+            weight = target_scores.sum(-1)[fg_mask].unsqueeze(-1)
+            iou = bbox_iou(pred_bboxes[fg_mask], target_bboxes[fg_mask], xywh=False, CIoU=True)
+            loss_iou = ((1.0 - iou) * weight).sum() / target_scores_sum
+    
+            # DFL loss
+            if self.dfl_loss:
+                target_ltrb = bbox2dist(anchor_points, target_bboxes, self.dfl_loss.reg_max - 1)
+                loss_dfl = self.dfl_loss(pred_dist[fg_mask].view(-1, self.dfl_loss.reg_max), target_ltrb[fg_mask]) * weight
+                loss_dfl = loss_dfl.sum() / target_scores_sum
+            else:
+                loss_dfl = torch.tensor(0.0).to(pred_dist.device)
+    
+            return loss_iou, loss_dfl
+    ```
